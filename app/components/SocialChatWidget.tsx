@@ -58,7 +58,7 @@ const socialChannels: SocialChannel[] = [
     ),
     color: '#ffffff',
     hoverBg: 'hover:bg-white/10 hover:border-white/30',
-    url: 'https://twitter.com/messages/compose?recipient_id=wanderlux',
+    url: 'https://twitter.com/intent/user?screen_name=wanderlux',
     label: 'DM on X',
   },
   {
