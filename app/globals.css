@@ -293,3 +293,55 @@ a {
   backdrop-filter: blur(12px);
   border: 1px solid rgba(198, 16, 16, 0.1);
 }
+
+/* ===== Social Chat Widget ===== */
+@keyframes social-chat-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.social-chat-pulse {
+  animation: social-chat-pulse 2s ease-out infinite;
+}
+
+@keyframes social-chat-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.social-chat-panel {
+  animation: social-chat-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: bottom right;
+}
+
+@keyframes social-chat-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.social-chat-item {
+  animation: social-chat-item-in 0.3s ease-out forwards;
+  animation-fill-mode: both;
+}

@@ -13,6 +13,11 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
     currency: initialSettings?.currency || 'USD',
     contactEmail: initialSettings?.contactEmail || '',
     contactPhone: initialSettings?.contactPhone || '',
+    whatsappUrl: initialSettings?.whatsappUrl || '',
+    instagramUrl: initialSettings?.instagramUrl || '',
+    facebookUrl: initialSettings?.facebookUrl || '',
+    xUrl: initialSettings?.xUrl || '',
+    telegramUrl: initialSettings?.telegramUrl || '',
   });
   
   const [isSaving, setIsSaving] = useState(false);
@@ -236,6 +241,95 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="+1 800 123 4567"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-surface-dark border border-border-dark rounded-xl overflow-hidden shadow-xl shadow-black/20">
+            <div className="p-6 border-b border-border-dark">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">chat</span>
+                Social Media Chat Links
+              </h2>
+              <p className="text-sm text-text-secondary mt-1">URLs for the floating social chat widget shown to visitors.</p>
+            </div>
+            
+            <div className="p-6 md:p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full bg-[#25D366]"></span>
+                    WhatsApp Link
+                  </label>
+                  <input 
+                    type="text"
+                    name="whatsappUrl"
+                    value={settings.whatsappUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="https://wa.me/18005550199"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full bg-[#E4405F]"></span>
+                    Instagram Link
+                  </label>
+                  <input 
+                    type="text"
+                    name="instagramUrl"
+                    value={settings.instagramUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="https://ig.me/m/wanderlux"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full bg-[#1877F2]"></span>
+                    Facebook Messenger Link
+                  </label>
+                  <input 
+                    type="text"
+                    name="facebookUrl"
+                    value={settings.facebookUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="https://m.me/wanderlux"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full bg-white"></span>
+                    X (Twitter) Link
+                  </label>
+                  <input 
+                    type="text"
+                    name="xUrl"
+                    value={settings.xUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="https://twitter.com/messages/compose?recipient_id=wanderlux"
+                  />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full bg-[#0088cc]"></span>
+                    Telegram Link
+                  </label>
+                  <input 
+                    type="text"
+                    name="telegramUrl"
+                    value={settings.telegramUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="https://t.me/wanderlux"
                   />
                 </div>
               </div>

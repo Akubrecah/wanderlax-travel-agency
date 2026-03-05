@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import SocialChatWidget from "./components/SocialChatWidget";
 
 export const metadata: Metadata = {
   title: "Wanderlux | Luxury Travel Agency",
@@ -37,6 +38,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <SocialChatWidget />
       </body>
     </html>
     </ClerkProvider>

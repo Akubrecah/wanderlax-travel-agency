@@ -18,6 +18,11 @@ export async function getGeneralSettings() {
         currency: string;
         contactEmail?: string;
         contactPhone?: string;
+        whatsappUrl?: string;
+        instagramUrl?: string;
+        facebookUrl?: string;
+        xUrl?: string;
+        telegramUrl?: string;
       };
     }
     
@@ -30,6 +35,11 @@ export async function getGeneralSettings() {
       currency: "USD",
       contactEmail: "info@wanderlax.com",
       contactPhone: "+1 234 567 890",
+      whatsappUrl: "",
+      instagramUrl: "",
+      facebookUrl: "",
+      xUrl: "",
+      telegramUrl: "",
     };
   } catch (error) {
     console.error("Error fetching general settings:", error);
