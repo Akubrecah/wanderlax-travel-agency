@@ -181,6 +181,8 @@ function BookingFormContent() {
       let result;
       if (existingBooking) {
         result = await confirmBookingByRef(existingBooking.bookingRef);
+        if (result.success) setSubmitted(true);
+        else setError(result.error || "Something went wrong. Please try again.");
       } else if (carId && car) {
         result = await createCarHireBooking({
           carId,
@@ -195,6 +197,13 @@ function BookingFormContent() {
           lastName: user.lastName || '',
           avatarUrl: user.imageUrl,
         });
+        if (result.success && result.booking?.bookingRef) {
+          // Redirect to Stripe payment step
+          window.location.href = `/portal/book?bookingRef=${result.booking.bookingRef}`;
+          return;
+        } else {
+          setError(result.error || "Something went wrong. Please try again.");
+        }
       } else if (hotelSlug && roomId && hotel && room) {
         result = await createHotelBooking({
           hotelSlug,
@@ -210,6 +219,13 @@ function BookingFormContent() {
           lastName: user.lastName || '',
           avatarUrl: user.imageUrl,
         });
+        if (result.success && result.booking?.bookingRef) {
+          // Redirect to Stripe payment step
+          window.location.href = `/portal/book?bookingRef=${result.booking.bookingRef}`;
+          return;
+        } else {
+          setError(result.error || "Something went wrong. Please try again.");
+        }
       } else {
         const tourSlug = tourName.toLowerCase().replace(/ /g, '-');
         result = await createTourBooking({
@@ -226,12 +242,8 @@ function BookingFormContent() {
           lastName: user.lastName || '',
           avatarUrl: user.imageUrl,
         });
-      }
-
-      if (result.success) {
-        setSubmitted(true);
-      } else {
-        setError(result.error || "Something went wrong. Please try again.");
+        if (result.success) setSubmitted(true);
+        else setError(result.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
       console.error("Booking submission error:", err);
