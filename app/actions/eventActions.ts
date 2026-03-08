@@ -555,27 +555,28 @@ export async function createTicketBooking(data: {
       });
     }
 
-    // 3. Calculate price
-    const finalPrice = await calculateTicketPrice(data.ticketTypeId, data.seatingZoneId);
+    // 3. Calculate price per ticket
+    const pricePerTicket = await calculateTicketPrice(data.ticketTypeId, data.seatingZoneId);
+    const ticketQuantity = data.ticketQuantity || 1;
+    const totalAmount = pricePerTicket * ticketQuantity;
 
     // 4. Create Transaction & Booking
     const booking = await prisma.$transaction(async (tx) => {
-      // Create Booking
+      // Create Booking with TOTAL amount (price × quantity)
       const book = await tx.booking.create({
         data: {
           bookingRef: `EVT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
           userId: user!.id,
           serviceType: "EVENT",
           status: "PENDING",
-          totalAmount: new Decimal(finalPrice),
-          finalAmount: new Decimal(finalPrice),
+          totalAmount: new Decimal(totalAmount),
+          finalAmount: new Decimal(totalAmount),
           eventId: data.eventId,
-          ticketQuantity: data.ticketQuantity || 1,
+          ticketQuantity: ticketQuantity,
         } as any,
       });
 
       // Create Tickets using createMany for better performance
-      const ticketQuantity = data.ticketQuantity || 1;
       const ticketData = [];
       for (let i = 0; i < ticketQuantity; i++) {
         ticketData.push({
@@ -583,9 +584,9 @@ export async function createTicketBooking(data: {
           userId: user!.id,
           ticketTypeId: data.ticketTypeId,
           seatSectionId: data.seatingZoneId,
-          attendeeName: i === 0 ? data.attendeeName : `${data.attendeeName} (Guest ${i})`,
+          attendeeName: i === 0 ? data.attendeeName : `${data.attendeeName} (Guest ${i + 1})`,
           attendeeEmail: data.attendeeEmail,
-          pricePaid: new Decimal(finalPrice / ticketQuantity),
+          pricePaid: new Decimal(pricePerTicket), // each ticket's own price
           status: "ISSUED" as any,
         });
       }
