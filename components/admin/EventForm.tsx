@@ -472,7 +472,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                         <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Early Bird End</label>
                         <input
                           type="datetime-local"
-                          value={tt.earlyBirdEndDate}
+                          value={tt.earlyBirdEndDate ?? ''}
                           onChange={(e) => handleTicketTypeChange(index, 'earlyBirdEndDate', e.target.value)}
                           className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-[11px] text-white focus:border-primary focus:outline-none [color-scheme:dark]"
                         />
@@ -481,7 +481,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                         <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Early Price</label>
                         <input
                           type="number"
-                          value={tt.earlyBirdPrice}
+                          value={tt.earlyBirdPrice ?? ''}
                           onChange={(e) => handleTicketTypeChange(index, 'earlyBirdPrice', parseFloat(e.target.value))}
                           className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                         />
@@ -547,7 +547,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                           type="number"
                           step="0.1"
                           required
-                          value={sz.priceModifier}
+                          value={sz.priceModifier ?? ''}
                           onChange={(e) => handleSeatingZoneChange(index, 'priceModifier', parseFloat(e.target.value))}
                           className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                         />

@@ -5,6 +5,26 @@ import { revalidatePath } from "next/cache";
 import { currentUser } from "@clerk/nextjs/server";
 import { Decimal } from "@prisma/client/runtime/library";
 
+// ============ UTILS ============
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function serializePrisma(data: any): any {
+  if (data === null || data === undefined) return data;
+  if (typeof data === 'object' && 'toNumber' in data && typeof data.toNumber === 'function') {
+    return data.toNumber();
+  }
+  if (Array.isArray(data)) return data.map(serializePrisma);
+  if (typeof data === 'object' && data.constructor === Object) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: any = {};
+    for (const key in data) {
+      result[key] = serializePrisma(data[key]);
+    }
+    return result;
+  }
+  return data;
+}
+
 // ============ ADMIN ACTIONS ============
 
 export async function createEvent(data: {
@@ -130,7 +150,7 @@ export async function createEvent(data: {
     revalidatePath("/admin/events");
     revalidatePath("/events");
 
-    return { success: true, event };
+    return { success: true, event: serializePrisma(event) };
   } catch (error) {
     console.error("Error creating event:", error);
     return { success: false, error: String(error) };
@@ -167,7 +187,7 @@ export async function updateEvent(
     revalidatePath("/events");
     revalidatePath(`/events/${event.slug}`);
 
-    return { success: true, event };
+    return { success: true, event: serializePrisma(event) };
   } catch (error) {
     console.error("Error updating event:", error);
     return { success: false, error: String(error) };
@@ -185,7 +205,7 @@ export async function publishEvent(id: string) {
     revalidatePath("/events");
     revalidatePath(`/events/${event.slug}`);
 
-    return { success: true, event };
+    return { success: true, event: serializePrisma(event) };
   } catch (error) {
     console.error("Error publishing event:", error);
     return { success: false, error: String(error) };
@@ -202,7 +222,7 @@ export async function cancelEvent(id: string) {
     revalidatePath("/admin/events");
     revalidatePath("/events");
 
-    return { success: true, event };
+    return { success: true, event: serializePrisma(event) };
   } catch (error) {
     console.error("Error cancelling event:", error);
     return { success: false, error: String(error) };
@@ -245,7 +265,8 @@ export async function getAdminEvents() {
       })),
     }));
 
-    return { success: true, events: eventsFormatted };
+    const finalEvents = serializePrisma(eventsFormatted);
+    return { success: true, events: finalEvents };
   } catch (err) {
     console.error("Error fetching admin events:", err);
     return { success: false, error: "Failed to fetch admin events" };
@@ -259,7 +280,7 @@ export async function getPublicEvents() {
     const events = await prisma.event.findMany({
       where: {
         status: "PUBLISHED" as any,
-        startDate: { gte: new Date() },
+        endDate: { gte: new Date() },
       },
       include: {
         ticketTypes: true,
@@ -272,7 +293,7 @@ export async function getPublicEvents() {
     });
 
     const formattedEvents = events.map((e) => {
-      const ticketsSold = e.tickets.filter((t) => (t.status as string) !== "CANCELLED").length;
+      const ticketsSold = e.tickets.filter((t: any) => (t.status as string) !== "CANCELLED").length;
       const capacityRemaining = Number(e.totalCapacity) - ticketsSold;
       const isSoldOut = capacityRemaining <= 0;
 
@@ -287,6 +308,8 @@ export async function getPublicEvents() {
         capacityRemaining,
         isSoldOut,
         basePrice: prices.length > 0 ? Math.min(...prices) : 0,
+        price: prices.length > 0 ? Math.min(...prices) : 0,
+        location: e.destination,
         ticketTypes: e.ticketTypes.map((tt: any) => ({
           ...tt,
           basePrice: Number(tt.basePrice),
@@ -300,7 +323,7 @@ export async function getPublicEvents() {
       };
     });
 
-    return { success: true, events: formattedEvents };
+    return { success: true, events: serializePrisma(formattedEvents) };
   } catch (error) {
     console.error("Error fetching public events:", error);
     return { success: false, error: "Failed to fetch events" };
@@ -341,7 +364,7 @@ export async function getEventBySlug(slug: string) {
       isSoldOut: capacityRemaining <= 0,
     };
 
-    return { success: true, event: formattedEvent };
+    return { success: true, event: serializePrisma(formattedEvent) };
   } catch (error) {
     console.error("Error fetching event by slug:", error);
     return { success: false, error: "Failed to fetch event" };
@@ -363,19 +386,13 @@ export async function getEventById(id: string) {
 
     const formattedEvent = {
       ...event,
-      ticketTypes: (event as any).ticketTypes.map((t: any) => ({
-        ...t,
-        basePrice: Number(t.basePrice),
-        earlyBirdPrice: t.earlyBirdPrice ? Number(t.earlyBirdPrice) : null,
-        surgeMultiplier: t.surgeMultiplier ? Number(t.surgeMultiplier) : null,
-      })),
       seatingZones: (event as any).seatingZones.map((z: any) => ({
         ...z,
         priceModifier: Number(z.priceModifier),
       })),
     };
 
-    return { success: true, event: formattedEvent };
+    return { success: true, event: serializePrisma(formattedEvent) };
   } catch (error) {
     console.error("Error fetching event by ID:", error);
     return { success: false, error: "Failed to fetch event" };
