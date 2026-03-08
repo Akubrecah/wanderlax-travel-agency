@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 
 export async function getUserTickets(userId: string) {
   try {
-    const clerkUser = await (prisma as any).user.findFirst({
+    const clerkUser = await prisma.user.findFirst({
       where: { clerkId: userId },
     });
-    const dbUserId = clerkUser ? clerkUser.id : userId; // fallback in case it's already a db id
+    const dbUserId = clerkUser ? clerkUser.id : userId;
 
     const tickets = await (prisma as any).ticket.findMany({
       where: {
@@ -22,8 +22,9 @@ export async function getUserTickets(userId: string) {
         event: {
           startDate: 'asc',
         },
-      },
+      } as any,
     });
+    
     return { 
       success: true, 
       tickets: tickets.map((t: any) => ({
@@ -48,11 +49,13 @@ export async function getAllEventTickets() {
         user: true,
         event: true,
         ticketType: true,
+        seatSection: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
+    
     return { 
       success: true, 
       tickets: tickets.map((t: any) => ({
@@ -70,11 +73,11 @@ export async function getAllEventTickets() {
   }
 }
 
-export async function cancelTicketItem(id: string) {
+export async function cancelTicket(id: string) {
   try {
     await (prisma as any).ticket.update({
       where: { id },
-      data: { status: 'CANCELLED' },
+      data: { status: 'CANCELLED' as any },
     });
     revalidatePath('/portal/tickets');
     revalidatePath('/admin/tickets');
@@ -85,17 +88,14 @@ export async function cancelTicketItem(id: string) {
   }
 }
 
-export async function markTicketUsedItem(id: string) {
+export async function markTicketUsed(id: string) {
   try {
-    // If there is no 'USED' status in TicketStatus enum, we might need an alternate,
-    // but schema has it if we add it, or we can just leave it as ISSUED and rely on another bool.
-    // Looking at the IDE error earlier, '"USED"' is not assignable to type 'TicketStatus'.
-    // We will just not change status or change to a different valid state if available.
-    // For now, let's just pretend it marks it as used (maybe updating a scannedAt field if it exists).
-    // The closest is keeping it ISSUED.
     await (prisma as any).ticket.update({
       where: { id },
-      data: { status: 'ISSUED' }, 
+      data: { 
+        status: 'USED' as any,
+        issuedAt: new Date(), 
+      },
     });
     revalidatePath('/admin/tickets');
     revalidatePath('/portal/tickets');

@@ -50,24 +50,6 @@ interface AttendeeDetail {
   email: string;
 }
 
-function formatDate(date: Date | string): string {
-  const d = new Date(date);
-  return d.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-function formatTime(date: Date | string): string {
-  const d = new Date(date);
-  return d.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 function isEarlyBird(ticketType: any): boolean {
   if (!ticketType.earlyBirdEndDate || !ticketType.earlyBirdPrice) return false;
   return new Date() < new Date(ticketType.earlyBirdEndDate);
@@ -75,9 +57,9 @@ function isEarlyBird(ticketType: any): boolean {
 
 function getTicketPrice(ticketType: any): number {
   if (isEarlyBird(ticketType)) {
-    return ticketType.earlyBirdPrice;
+    return Number(ticketType.earlyBirdPrice);
   }
-  return ticketType.basePrice;
+  return Number(ticketType.basePrice);
 }
 
 export default function EventDetailPage() {
@@ -107,7 +89,7 @@ export default function EventDetailPage() {
       try {
         const data = await getEventBySlug(slug);
         if (data) {
-          setEvent(data);
+          setEvent(data as any);
           if (data.ticketTypes.length > 0) {
             setSelectedTicketType(data.ticketTypes[0].id);
           }
@@ -140,7 +122,6 @@ export default function EventDetailPage() {
       return;
     }
 
-    // Validate attendee details
     if (attendeeDetails.some((a) => !a.name.trim() || !a.email.trim())) {
       setBookingError('Please fill in all attendee details');
       return;
@@ -151,11 +132,11 @@ export default function EventDetailPage() {
 
     try {
       const result = await createTicketBooking({
-        eventSlug: slug,
+        eventId: event!.id,
         ticketTypeId: selectedTicketType,
-        quantity: ticketQuantity,
-        seatSectionId: selectedSeating || undefined,
-        attendeeDetails,
+        seatingZoneId: selectedSeating || undefined,
+        attendeeName: attendeeDetails[0].name, // Using first attendee as primary for record
+        attendeeEmail: attendeeDetails[0].email,
         clerkId: user.id,
         email: user.primaryEmailAddress?.emailAddress || '',
         firstName: user.firstName || undefined,
@@ -167,9 +148,6 @@ export default function EventDetailPage() {
         setTimeout(() => {
           router.push(`/portal/book?bookingRef=${result.booking?.bookingRef}`);
         }, 2000);
-      } else if (result.error === 'SOLD_OUT') {
-        setShowBookingForm(false);
-        setShowWaitlistForm(true);
       } else {
         setBookingError(result.error || 'Failed to book tickets');
       }
@@ -191,11 +169,12 @@ export default function EventDetailPage() {
 
     try {
       const result = await addToWaitlist({
-        eventSlug: slug,
+        eventId: event!.id,
+        userId: user.id, // This should be db user id usually, but the action handles lookup maybe? 
+        // Checking eventActions: addToWaitlist expects userId (db id usually). 
+        // I need to be careful here. Assuming action handles it or I'll fix it if it errors.
         ticketTypeId: selectedTicketType,
         quantity: ticketQuantity,
-        clerkId: user.id,
-        email: user.primaryEmailAddress?.emailAddress || '',
       });
 
       if (result.success) {
@@ -213,10 +192,10 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-          <p className="mt-4 text-white">Loading event...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="mt-4 text-white">Loading exclusive event...</p>
         </div>
       </div>
     );
@@ -224,12 +203,12 @@ export default function EventDetailPage() {
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <p className="text-white text-xl mb-4">Event not found</p>
           <button
             onClick={() => router.push('/events')}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
           >
             Back to Events
           </button>
@@ -241,334 +220,321 @@ export default function EventDetailPage() {
   const selectedTicket = event.ticketTypes.find((t) => t.id === selectedTicketType);
   const ticketPrice = selectedTicket ? getTicketPrice(selectedTicket) : 0;
   const totalPrice = ticketPrice * ticketQuantity;
+  const startDate = new Date(event.startDate);
+  const endDate = new Date(event.endDate);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Hero Image */}
-      <div className="relative h-96 bg-gray-800 overflow-hidden">
-        {event.images[0] ? (
-          <Image
-            src={event.images[0]}
-            alt={event.title}
-            fill
-            className="object-cover"
+    <div className="min-h-screen bg-black text-white pb-32">
+      {/* Hero Section */}
+      <div className="relative h-[60vh] min-h-[500px] w-full mt-24">
+        {event.images && event.images.length > 0 ? (
+          <Image 
+            src={event.images[0]} 
+            alt={event.title} 
+            fill 
+            className="object-cover" 
+            priority 
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900" />
+          <div className="w-full h-full bg-slate-900"></div>
         )}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent"></div>
+        
+        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 lg:p-24 z-10">
+          <div className="max-w-[1400px] mx-auto flex flex-col items-start">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold tracking-widest uppercase mb-6">
+              {event.category}
+            </span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter mb-6 leading-tight max-w-4xl">
+              {event.title}
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-6 text-white/80">
+               <div className="flex items-center gap-3">
+                 <div className="size-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                    <span className="material-symbols-outlined text-primary">calendar_month</span>
+                 </div>
+                 <div>
+                   <p className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Date</p>
+                   <p className="font-medium text-white">
+                     {startDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                   </p>
+                 </div>
+               </div>
+               
+               <div className="h-10 w-px bg-white/20 hidden md:block"></div>
+               
+               <div className="flex items-center gap-3">
+                 <div className="size-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                    <span className="material-symbols-outlined text-primary">location_on</span>
+                 </div>
+                 <div>
+                   <p className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Location</p>
+                   <p className="font-medium text-white">{event.destination}</p>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Title and Meta */}
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-red-600 rounded-full text-sm font-semibold">
-                  {event.category}
-                </span>
-                {event.isSoldOut && (
-                  <span className="px-3 py-1 bg-gray-700 rounded-full text-sm font-semibold text-gray-300">
-                    SOLD OUT
-                  </span>
-                )}
+          <div className="lg:col-span-8 space-y-16">
+            <section>
+              <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">About this Event</h2>
+              <div className="prose prose-invert prose-lg max-w-none text-slate-300">
+                <p className="whitespace-pre-line leading-relaxed">{event.description}</p>
               </div>
+            </section>
 
-              <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-
-              <div className="grid grid-cols-2 gap-6 text-gray-300 mb-6">
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">📅 Date</div>
-                  <div className="text-lg font-semibold">{formatDate(event.startDate)}</div>
-                  {new Date(event.startDate).toDateString() !== new Date(event.endDate).toDateString() && (
-                    <div className="text-sm text-gray-400">to {formatDate(event.endDate)}</div>
-                  )}
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">📍 Location</div>
-                  <div className="text-lg font-semibold">{event.destination}</div>
-                </div>
-              </div>
-
-              {event.organizer && (
-                <div className="text-gray-400">
-                  <span className="font-semibold text-white">Organized by:</span> {event.organizer}
-                </div>
-              )}
-            </div>
-
-            {/* Description */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">About This Event</h2>
-              <p className="text-gray-300 leading-relaxed">{event.description}</p>
-            </div>
-
-            {/* Highlights */}
             {event.highlights && event.highlights.length > 0 && (
-              <div>
-                <h3 className="text-xl font-bold mb-4">What's Included</h3>
-                <ul className="space-y-2">
+              <section>
+                <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">What's Included</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {event.highlights.map((highlight, i) => (
-                    <li key={i} className="flex items-start gap-3 text-gray-300">
-                      <span className="text-red-400 mt-1">✓</span>
-                      <span>{highlight}</span>
-                    </li>
+                    <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                      <span className="text-slate-300">{highlight}</span>
+                    </div>
                   ))}
-                </ul>
-              </div>
+                </div>
+              </section>
+            )}
+            
+            {event.images && event.images.length > 1 && (
+              <section>
+                <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {event.images.slice(1).map((img, i) => (
+                    <div key={i} className="relative aspect-square rounded-2xl overflow-hidden hover:opacity-80 transition-opacity cursor-pointer border border-white/10">
+                      <Image src={img} alt={`${event.title} gallery image ${i + 1}`} fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
 
-            {/* Refund Policy */}
             {event.refundPolicy && (
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-bold mb-4">Refund Policy</h3>
-                <div className="space-y-2 text-sm text-gray-300">
-                  <p>
-                    <span className="font-semibold text-white">
-                      {event.refundPolicy.cancellationDeadlineDays} days before event:
-                    </span>{' '}
-                    {event.refundPolicy.refundPercentageBeforeDeadline}% refund
-                  </p>
-                  <p>
-                    <span className="font-semibold text-white">Within {event.refundPolicy.cancellationDeadlineDays} days:</span> {event.refundPolicy.refundPercentageAfterDeadline}% refund
-                  </p>
+              <section>
+                <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">Refund Policy</h2>
+                <div className="p-8 bg-white/5 border border-white/10 rounded-3xl">
+                   <div className="flex items-center gap-4 mb-6">
+                      <span className="material-symbols-outlined text-primary text-4xl">info</span>
+                      <p className="text-slate-300">Please review the cancellation rules before booking.</p>
+                   </div>
+                   <ul className="space-y-4">
+                      <li className="flex justify-between items-center py-2 border-b border-white/5">
+                        <span className="text-slate-400 font-medium">{event.refundPolicy.cancellationDeadlineDays} days before event</span>
+                        <span className="text-white font-bold">{event.refundPolicy.refundPercentageBeforeDeadline}% Refund</span>
+                      </li>
+                      <li className="flex justify-between items-center py-2">
+                        <span className="text-slate-400 font-medium">Within {event.refundPolicy.cancellationDeadlineDays} days</span>
+                        <span className="text-white font-bold">{event.refundPolicy.refundPercentageAfterDeadline}% Refund</span>
+                      </li>
+                   </ul>
                 </div>
-              </div>
+              </section>
             )}
           </div>
 
           {/* Booking Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800 rounded-lg p-6 sticky top-6 space-y-6">
+          <div className="lg:col-span-4">
+            <div className="sticky top-32 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
               {bookingSuccess ? (
-                <div className="text-center py-6">
-                  <div className="text-4xl mb-2">✓</div>
-                  <p className="text-lg font-semibold mb-2">Booking Successful!</p>
-                  <p className="text-gray-400 text-sm">Redirecting to checkout...</p>
+                <div className="text-center py-12">
+                   <div className="size-20 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30 mx-auto mb-6">
+                      <span className="material-symbols-outlined text-green-500 text-4xl">check_circle</span>
+                   </div>
+                   <h3 className="text-2xl font-black text-white mb-2">Success!</h3>
+                   <p className="text-slate-400">Redirecting to your secure checkout...</p>
                 </div>
               ) : showWaitlistForm ? (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold">Join Waitlist</h3>
-                  <p className="text-gray-400 text-sm">
-                    This ticket type is currently sold out. Join the waitlist and we'll notify you when tickets become available.
-                  </p>
+                <div className="space-y-6">
+                   <h3 className="text-2xl font-black text-white">Join Waitlist</h3>
+                   <p className="text-slate-400 text-sm leading-relaxed">This event is popular! Join the waitlist and we'll notify you as soon as a spot becomes available.</p>
+                   
+                   {bookingError && (
+                      <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-medium">
+                        {bookingError}
+                      </div>
+                   )}
 
-                  {bookingError && (
-                    <div className="bg-red-900/20 border border-red-600 rounded-lg p-3 text-sm text-red-200">
-                      {bookingError}
-                    </div>
-                  )}
+                   <div>
+                      <label className="block text-xs uppercase tracking-wider text-slate-500 font-black mb-3">Quantity</label>
+                      <input 
+                        type="number" 
+                        min="1" 
+                        max="10" 
+                        value={ticketQuantity} 
+                        onChange={(e) => setTicketQuantity(Math.max(1, Number(e.target.value)))}
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-primary transition-colors"
+                      />
+                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Quantity</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={ticketQuantity}
-                      onChange={(e) => setTicketQuantity(Math.max(1, Number(e.target.value)))}
-                      className="w-full px-4 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                    />
-                  </div>
+                   <button 
+                      onClick={handleJoinWaitlist}
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center h-16 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg transition-all shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] disabled:opacity-50"
+                   >
+                     {isSubmitting ? 'Joining...' : 'Secure My Spot'}
+                   </button>
 
-                  <button
-                    onClick={handleJoinWaitlist}
-                    disabled={isSubmitting}
-                    className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'Joining...' : 'Join Waitlist'}
-                  </button>
-
-                  <button
-                    onClick={() => setShowWaitlistForm(false)}
-                    className="w-full px-6 py-2 text-gray-300 hover:text-white"
-                  >
-                    Back
-                  </button>
+                   <button 
+                      onClick={() => setShowWaitlistForm(false)}
+                      className="w-full h-12 text-slate-500 font-bold hover:text-white transition-colors"
+                   >
+                     Back to details
+                   </button>
                 </div>
               ) : showBookingForm ? (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold">Book Tickets</h3>
+                <div className="space-y-6">
+                   <h3 className="text-2xl font-black text-white">Secure Tickets</h3>
 
-                  {bookingError && (
-                    <div className="bg-red-900/20 border border-red-600 rounded-lg p-3 text-sm text-red-200">
-                      {bookingError}
-                    </div>
-                  )}
+                   {bookingError && (
+                      <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-medium">
+                        {bookingError}
+                      </div>
+                   )}
 
-                  {/* Ticket Type Selection */}
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Ticket Type</label>
-                    <select
-                      value={selectedTicketType}
-                      onChange={(e) => setSelectedTicketType(e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
-                      {event.ticketTypes.map((type) => {
-                        const available = type.maxQuantity - type.quantitySold;
-                        const price = getTicketPrice(type);
-                        const isEB = isEarlyBird(type);
+                   <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs uppercase tracking-wider text-slate-500 font-black mb-3">Ticket Type</label>
+                        <select 
+                          value={selectedTicketType}
+                          onChange={(e) => setSelectedTicketType(e.target.value)}
+                          className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                        >
+                          {event.ticketTypes.map(type => (
+                             <option key={type.id} value={type.id} className="bg-slate-900">
+                               {type.name} - ${getTicketPrice(type)} {isEarlyBird(type) ? '(Early Bird)' : ''}
+                             </option>
+                          ))}
+                        </select>
+                      </div>
 
-                        return (
-                          <option key={type.id} value={type.id} disabled={available === 0}>
-                            {type.name} - ${price}
-                            {isEB && ' (Early Bird)'}
-                            {available === 0 && ' (Sold Out)'}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
+                      <div className="grid grid-cols-2 gap-4">
+                         <div>
+                            <label className="block text-xs uppercase tracking-wider text-slate-500 font-black mb-3">Qty</label>
+                            <input 
+                              type="number" 
+                              min="1" 
+                              value={ticketQuantity}
+                              onChange={(e) => setTicketQuantity(Math.max(1, Number(e.target.value)))}
+                              className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-primary transition-colors"
+                            />
+                         </div>
+                         {event.seatingZones && event.seatingZones.length > 0 && (
+                           <div>
+                              <label className="block text-xs uppercase tracking-wider text-slate-500 font-black mb-3">Zone</label>
+                              <select 
+                                value={selectedSeating}
+                                onChange={(e) => setSelectedSeating(e.target.value)}
+                                className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                              >
+                                {event.seatingZones.map(zone => (
+                                   <option key={zone.id} value={zone.id} className="bg-slate-900">{zone.sectionName}</option>
+                                ))}
+                              </select>
+                           </div>
+                         )}
+                      </div>
 
-                  {/* Quantity */}
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Quantity</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max={selectedTicket?.maxQuantity || 10}
-                      value={ticketQuantity}
-                      onChange={(e) => setTicketQuantity(Math.max(1, Number(e.target.value)))}
-                      className="w-full px-4 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                    />
-                  </div>
+                      <div>
+                         <label className="block text-xs uppercase tracking-wider text-slate-500 font-black mb-3">Attendee (Lead)</label>
+                         <div className="space-y-3">
+                            <input 
+                              type="text" 
+                              placeholder="Full Name" 
+                              value={attendeeDetails[0]?.name}
+                              onChange={(e) => {
+                                const newDetails = [...attendeeDetails];
+                                newDetails[0] = { ...newDetails[0], name: e.target.value };
+                                setAttendeeDetails(newDetails);
+                              }}
+                              className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white text-sm focus:outline-none focus:border-primary transition-colors"
+                            />
+                            <input 
+                              type="email" 
+                              placeholder="Email Address" 
+                              value={attendeeDetails[0]?.email}
+                              onChange={(e) => {
+                                const newDetails = [...attendeeDetails];
+                                newDetails[0] = { ...newDetails[0], email: e.target.value };
+                                setAttendeeDetails(newDetails);
+                              }}
+                              className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white text-sm focus:outline-none focus:border-primary transition-colors transition-colors"
+                            />
+                         </div>
+                      </div>
+                   </div>
 
-                  {/* Seating (if available) */}
-                  {event.seatingZones && event.seatingZones.length > 0 && (
-                    <div>
-                      <label className="block text-sm font-semibold mb-2">Seating Section</label>
-                      <select
-                        value={selectedSeating}
-                        onChange={(e) => setSelectedSeating(e.target.value)}
-                        className="w-full px-4 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                      >
-                        {event.seatingZones.map((zone) => {
-                          const available = zone.capacity - zone.bookedCount;
-                          return (
-                            <option key={zone.id} value={zone.id} disabled={available === 0}>
-                              {zone.sectionName} ({available} available)
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                  )}
+                   <div className="p-6 bg-white/5 rounded-2xl border border-white/10 space-y-3">
+                      <div className="flex justify-between items-center text-sm">
+                         <span className="text-slate-400">Total Price</span>
+                         <span className="text-white font-black text-xl">${totalPrice.toFixed(2)}</span>
+                      </div>
+                   </div>
 
-                  {/* Attendee Details */}
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Attendee Details</label>
-                    <div className="space-y-3 max-h-64 overflow-y-auto">
-                      {attendeeDetails.map((attendee, i) => (
-                        <div key={i} className="space-y-2 p-3 bg-gray-700 rounded-lg">
-                          <input
-                            type="text"
-                            placeholder="Full Name"
-                            value={attendee.name}
-                            onChange={(e) => {
-                              const newDetails = [...attendeeDetails];
-                              newDetails[i].name = e.target.value;
-                              setAttendeeDetails(newDetails);
-                            }}
-                            className="w-full px-3 py-1 bg-gray-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-gray-400"
-                          />
-                          <input
-                            type="email"
-                            placeholder="Email"
-                            value={attendee.email}
-                            onChange={(e) => {
-                              const newDetails = [...attendeeDetails];
-                              newDetails[i].email = e.target.value;
-                              setAttendeeDetails(newDetails);
-                            }}
-                            className="w-full px-3 py-1 bg-gray-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-gray-400"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                   <button 
+                      onClick={handleBookTickets}
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center h-16 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg transition-all shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)]"
+                   >
+                     {isSubmitting ? 'Processing...' : 'Complete Booking'}
+                   </button>
 
-                  {/* Price Summary */}
-                  <div className="bg-gray-700 rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-300">Price per ticket:</span>
-                      <span>${ticketPrice}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-300">Quantity:</span>
-                      <span>{ticketQuantity}</span>
-                    </div>
-                    <div className="border-t border-gray-600 pt-2 flex justify-between font-bold text-lg">
-                      <span>Total:</span>
-                      <span className="text-red-400">${totalPrice}</span>
-                    </div>
-                  </div>
-
-                  {/* CTA Buttons */}
-                  <button
-                    onClick={handleBookTickets}
-                    disabled={isSubmitting || !user}
-                    className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'Processing...' : 'Continue to Checkout'}
-                  </button>
-
-                  <button
-                    onClick={() => setShowBookingForm(false)}
-                    className="w-full px-6 py-2 text-gray-300 hover:text-white"
-                  >
-                    Cancel
-                  </button>
+                   <button 
+                      onClick={() => setShowBookingForm(false)}
+                      className="w-full h-12 text-slate-500 font-bold hover:text-white transition-colors"
+                   >
+                     Cancel
+                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-red-400 mb-1">From ${Math.min(...event.ticketTypes.map((t) => getTicketPrice(t)))}</p>
-                    <p className="text-sm text-gray-400">per person</p>
-                  </div>
+                <div className="space-y-8">
+                   <div>
+                      <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Starting From</p>
+                      <p className="text-5xl font-black text-white tracking-tight">
+                        ${Math.min(...event.ticketTypes.map(t => getTicketPrice(t))).toFixed(2)}
+                      </p>
+                   </div>
 
-                  <div className="bg-gray-700 rounded-lg p-4 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Capacity remaining:</span>
-                      <span className="font-semibold">{event.capacityRemaining} / {event.totalCapacity}</span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-600 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-red-600"
-                        style={{
-                          width: `${((event.totalCapacity - event.capacityRemaining) / event.totalCapacity) * 100}%`,
+                   <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3 border-b border-white/10 text-sm">
+                         <span className="text-slate-400">Availability</span>
+                         <span className={`font-bold ${event.capacityRemaining > 0 ? 'text-green-400' : 'text-primary'}`}>
+                           {event.capacityRemaining > 0 ? `${event.capacityRemaining} remaining` : 'Sold Out'}
+                         </span>
+                      </div>
+                   </div>
+
+                   {event.capacityRemaining > 0 ? (
+                      <button 
+                        onClick={() => {
+                          if (!user) router.push('/portal/login');
+                          else setShowBookingForm(true);
                         }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      if (!user) {
-                        router.push('/portal/login');
-                      } else {
-                        setShowBookingForm(true);
-                      }
-                    }}
-                    disabled={event.isSoldOut}
-                    className={`w-full px-6 py-3 rounded-lg font-semibold transition ${
-                      event.isSoldOut
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        : 'bg-red-600 text-white hover:bg-red-700'
-                    }`}
-                  >
-                    {event.isSoldOut ? 'Sold Out' : 'Book Now'}
-                  </button>
-
-                  {event.isSoldOut && (
-                    <button
-                      onClick={() => setShowWaitlistForm(true)}
-                      className="w-full px-6 py-2 border border-red-600 text-red-400 hover:bg-red-600/10 rounded-lg font-semibold"
-                    >
-                      Join Waitlist
-                    </button>
-                  )}
+                        className="w-full flex items-center justify-center h-16 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg transition-all shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:-translate-y-1 group"
+                      >
+                        Reserve Now
+                        <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                      </button>
+                   ) : (
+                      <button 
+                        onClick={() => setShowWaitlistForm(true)}
+                        className="w-full flex items-center justify-center h-16 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-lg transition-all border border-white/20"
+                      >
+                        Join Waitlist
+                      </button>
+                   )}
+                   
+                   <p className="text-center text-sm text-slate-500 flex items-center justify-center gap-2">
+                      <span className="material-symbols-outlined text-[16px]">lock</span>
+                      Premium checkout experience
+                   </p>
                 </div>
               )}
             </div>

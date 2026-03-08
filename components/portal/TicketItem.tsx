@@ -1,8 +1,29 @@
 import React from 'react';
 import Image from 'next/image';
 
+interface TicketEvent {
+  title: string;
+  startDate: string | Date;
+  images?: string[];
+  category: string;
+  destination?: string;
+  location?: string;
+}
+
+interface TicketType {
+  name: string;
+}
+
+interface Ticket {
+  id: string;
+  attendeeName: string | null;
+  status: string;
+  event: TicketEvent;
+  ticketType?: TicketType;
+}
+
 interface TicketItemProps {
-  ticket: any; // Using any for simplicity in this example, ideally properly typed
+  ticket: Ticket;
 }
 
 export default function TicketItem({ ticket }: TicketItemProps) {
@@ -10,14 +31,18 @@ export default function TicketItem({ ticket }: TicketItemProps) {
   const startDate = new Date(event.startDate);
 
   const statusColors: Record<string, string> = {
+    AVAILABLE: 'bg-green-500/20 text-green-400 border-green-500/30',
+    VALID: 'bg-green-500/20 text-green-400 border-green-500/30',
     ISSUED: 'bg-green-500/20 text-green-400 border-green-500/30',
-    RESERVED: 'bg-green-500/20 text-green-400 border-green-500/30', // treat RESERVED as valid for display
+    RESERVED: 'bg-green-500/20 text-green-400 border-green-500/30',
     USED: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
     CANCELLED: 'bg-primary/20 text-primary border-primary/30',
     REFUNDED: 'bg-primary/20 text-primary border-primary/30',
   };
 
   const statusIcons: Record<string, string> = {
+    AVAILABLE: 'check_circle',
+    VALID: 'check_circle',
     ISSUED: 'check_circle',
     RESERVED: 'hourglass_empty',
     USED: 'done_all',
@@ -25,10 +50,9 @@ export default function TicketItem({ ticket }: TicketItemProps) {
     REFUNDED: 'undo',
   };
 
-  // Default colors/icons for unknown states
   const colorClass = statusColors[status] || 'bg-slate-500/20 text-slate-400 border-slate-500/30';
   const iconName = statusIcons[status] || 'info';
-  const isValid = status === 'ISSUED' || status === 'RESERVED';
+  const isValid = status === 'AVAILABLE' || status === 'VALID' || status === 'ISSUED' || status === 'RESERVED';
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md group hover:border-white/20 transition-all duration-300">
@@ -78,7 +102,7 @@ export default function TicketItem({ ticket }: TicketItemProps) {
             </div>
             <div className="flex items-center gap-2 text-slate-400 text-sm mt-2">
                <span className="material-symbols-outlined text-[16px] text-primary">location_on</span>
-               <span className="truncate">{event.location}</span>
+               <span className="truncate">{event.destination || event.location}</span>
             </div>
           </div>
 

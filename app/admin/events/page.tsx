@@ -8,8 +8,8 @@ export const metadata = {
 };
 
 export default async function EventsAdminPage() {
-  const result = await getAdminEvents();
-  const safeEvents = result.success && result.events ? result.events : [];
+  const result = await getAdminEvents() as any;
+  const safeEvents = result?.success && result?.events ? result.events : [];
 
   return (
     <div className="stitch-screen">

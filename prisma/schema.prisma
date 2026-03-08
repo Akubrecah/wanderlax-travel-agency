@@ -354,6 +354,7 @@ model Booking {
   hotelBookingId   String?         @unique
   tourBookingId    String?         @unique
   appointmentId    String?         @unique
+  eventBookingId   String?         @unique
   appointment      Appointment?    @relation("AppointmentBooking", fields: [appointmentId], references: [id])
   carHireBooking   CarHireBooking? @relation("CarBooking", fields: [carHireBookingId], references: [id])
   hotelBooking     HotelBooking?   @relation("HotelBooking", fields: [hotelBookingId], references: [id])
@@ -674,12 +675,15 @@ model EventRefundPolicy {
   event                       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
+
 enum Role {
   CUSTOMER
   CONSULTANT
   ADMIN
   SUPER_ADMIN
 }
+
+
 
 // Enums removed: ModuleType, PermissionLevel
 
@@ -775,10 +779,14 @@ enum InquiryStatus {
   RESOLVED
 }
 
+
 enum EventStatus {
   DRAFT
   PUBLISHED
   CANCELLED
+  UPCOMING
+  ONGOING
+  COMPLETED
 }
 
 enum EventCategory {
@@ -786,6 +794,9 @@ enum EventCategory {
   CONCERT
   EXPERIENCE
   WORKSHOP
+  FESTIVAL
+  EXHIBITION
+  GENERAL
   OTHER
 }
 
@@ -793,6 +804,8 @@ enum TicketStatus {
   AVAILABLE
   RESERVED
   ISSUED
+  VALID
+  USED
   REFUNDED
   CANCELLED
 }
@@ -803,3 +816,4 @@ enum WaitlistStatus {
   EXPIRED
   CLOSED
 }
+

@@ -29,6 +29,37 @@ interface RefundPolicy {
   refundPercentageAfterEvent: number;
 }
 
+interface EventDetail {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  destination: string;
+  category: "CONFERENCE" | "CONCERT" | "EXPERIENCE" | "WORKSHOP" | "OTHER";
+  status: string;
+  startDate: string | Date;
+  endDate: string | Date;
+  totalCapacity: number;
+  organizer: string | null;
+  images: string[];
+  highlights: string[];
+  ticketTypes: TicketType[];
+  seatingZones: SeatingZone[];
+  refundPolicy: RefundPolicy | null;
+}
+
+interface EventResponse {
+  success: boolean;
+  event?: EventDetail;
+  error?: string;
+}
+
+interface EventPayload extends Omit<EventDetail, 'id' | 'startDate' | 'endDate' | 'ticketTypes'> {
+  startDate: Date;
+  endDate: Date;
+  ticketTypes: Array<Omit<TicketType, 'earlyBirdEndDate'> & { earlyBirdEndDate?: Date }>;
+}
+
 export default function EventForm({ eventId }: { eventId?: string }) {
   const router = useRouter();
   const isEditing = !!eventId;
@@ -64,8 +95,9 @@ export default function EventForm({ eventId }: { eventId?: string }) {
     if (isEditing) {
       const fetchEvent = async () => {
         try {
-          const { success, event } = await getEventById(eventId);
-          if (success && event) {
+          const result = await getEventById(eventId as string) as EventResponse;
+          if (result.success && result.event) {
+            const event = result.event;
             setFormData({
               title: event.title || '',
               slug: event.slug || '',
@@ -79,7 +111,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
               organizer: event.organizer || '',
               images: event.images?.length ? event.images : [''],
               highlights: event.highlights?.length ? event.highlights : [''],
-              ticketTypes: event.ticketTypes?.map((tt: any) => ({
+              ticketTypes: event.ticketTypes?.map((tt) => ({
                 name: tt.name,
                 basePrice: Number(tt.basePrice),
                 maxQuantity: tt.maxQuantity,
@@ -88,7 +120,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                 surgeThreshold: tt.surgeThreshold || undefined,
                 surgeMultiplier: tt.surgeMultiplier ? Number(tt.surgeMultiplier) : undefined,
               })) || [],
-              seatingZones: event.seatingZones?.map((sz: any) => ({
+              seatingZones: event.seatingZones?.map((sz) => ({
                 sectionName: sz.sectionName,
                 capacity: sz.capacity,
                 priceModifier: sz.priceModifier ? Number(sz.priceModifier) : undefined,
@@ -135,7 +167,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
     }
   };
 
-  const handleTicketTypeChange = (index: number, field: keyof TicketType, value: any) => {
+  const handleTicketTypeChange = (index: number, field: keyof TicketType, value: string | number | undefined) => {
     const newTypes = [...formData.ticketTypes];
     newTypes[index] = { ...newTypes[index], [field]: value };
     setFormData(prev => ({ ...prev, ticketTypes: newTypes }));
@@ -155,7 +187,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
     }));
   };
 
-  const handleSeatingZoneChange = (index: number, field: keyof SeatingZone, value: any) => {
+  const handleSeatingZoneChange = (index: number, field: keyof SeatingZone, value: string | number | undefined) => {
     const newZones = [...formData.seatingZones];
     newZones[index] = { ...newZones[index], [field]: value };
     setFormData(prev => ({ ...prev, seatingZones: newZones }));
@@ -222,7 +254,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
       return;
     }
 
-    const payload = {
+    const payload: EventPayload = {
       ...formData,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),
@@ -236,7 +268,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
 
     try {
       const action = isEditing ? updateEvent.bind(null, eventId as string) : createEvent;
-      const result = await action(payload as any);
+      const result = await (action as (data: EventPayload) => Promise<EventResponse>)(payload);
 
       if (result.success) {
         toast.success(isEditing ? 'Event updated!' : 'Event created!');
@@ -459,6 +491,77 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                 ))}
               </div>
             </section>
+
+            <section className="bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">chair_alt</span>
+                  Seating Zones (Optional)
+                </h2>
+                <button
+                  type="button"
+                  onClick={addSeatingZone}
+                  className="px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-all flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  Add Zone
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {formData.seatingZones.map((sz, index) => (
+                  <div key={index} className="bg-background-dark/30 border border-white/5 rounded-xl p-4 space-y-4 relative group">
+                    <button 
+                      type="button" 
+                      onClick={() => removeSeatingZone(index)}
+                      className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors"
+                    >
+                      <span className="material-symbols-outlined">close</span>
+                    </button>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-1">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Section Name</label>
+                        <input
+                          type="text"
+                          required
+                          value={sz.sectionName}
+                          onChange={(e) => handleSeatingZoneChange(index, 'sectionName', e.target.value)}
+                          placeholder="VIP Section, Balcony, etc."
+                          className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Capacity</label>
+                        <input
+                          type="number"
+                          required
+                          value={sz.capacity}
+                          onChange={(e) => handleSeatingZoneChange(index, 'capacity', parseInt(e.target.value))}
+                          className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Price Modifier (x)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          required
+                          value={sz.priceModifier}
+                          onChange={(e) => handleSeatingZoneChange(index, 'priceModifier', parseFloat(e.target.value))}
+                          className="w-full bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {formData.seatingZones.length === 0 && (
+                  <p className="text-slate-500 text-xs text-center py-4 bg-background-dark/20 border border-dashed border-white/5 rounded-xl italic">
+                    No custom seating zones defined. Event will use general admission seating.
+                  </p>
+                )}
+              </div>
+            </section>
           </div>
 
           {/* Sidebar Settings */}
@@ -470,7 +573,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2 text-right">Venue Location</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">Venue Location</label>
                   <input
                     type="text"
                     name="destination"
@@ -481,7 +584,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2 text-right">Total Capacity</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">Total Capacity</label>
                   <input
                     type="number"
                     name="totalCapacity"
@@ -492,7 +595,7 @@ export default function EventForm({ eventId }: { eventId?: string }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2 text-right">Organizer</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">Organizer</label>
                   <input
                     type="text"
                     name="organizer"
@@ -545,8 +648,34 @@ export default function EventForm({ eventId }: { eventId?: string }) {
             <section className="bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">stars</span>
+                  Highlights
+                </h2>
+                <button type="button" onClick={addHighlightField} className="text-primary text-[10px] font-bold hover:underline">Add New</button>
+              </div>
+              <div className="space-y-2">
+                {formData.highlights.map((h, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={h}
+                      onChange={(e) => handleHighlightChange(i, e.target.value)}
+                      placeholder="E.g., Refreshments included"
+                      className="flex-1 bg-background-dark border border-white/10 rounded-lg px-3 py-2 text-xs text-white"
+                    />
+                    <button type="button" onClick={() => removeHighlightField(i)} className="text-red-500 opacity-50 hover:opacity-100">
+                      <span className="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">image</span>
-                  Images
+                  Event Images
                 </h2>
                 <button type="button" onClick={addImageField} className="text-primary text-[10px] font-bold hover:underline">Add New</button>
               </div>

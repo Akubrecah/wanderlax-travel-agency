@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getAllEventTickets, markTicketUsedItem, cancelTicketItem } from '@/app/actions/eventBookingActions';
+import { getAllEventTickets, markTicketUsed, cancelTicket } from '@/app/actions/eventBookingActions';
 
 export default function AdminTicketsPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -19,7 +19,7 @@ export default function AdminTicketsPage() {
   }, []);
 
   const handleMarkUsed = async (ticketId: string) => {
-    const { success } = await markTicketUsedItem(ticketId);
+    const { success } = await markTicketUsed(ticketId);
     if (success) {
       // Optimistic update
       setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: 'USED' } : t));
@@ -27,14 +27,14 @@ export default function AdminTicketsPage() {
   };
 
   const handleCancelTicket = async (ticketId: string) => {
-    const { success } = await cancelTicketItem(ticketId);
+    const { success } = await cancelTicket(ticketId);
     if (success) {
       // Optimistic update
       setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: 'CANCELLED' } : t));
     }
   };
 
-  if (loading) return <div className="p-8 text-white">Loading tickets...</div>;
+  if (loading) return <div className="p-8 text-white text-center">Loading tickets...</div>;
 
   return (
     <div className="p-8">
@@ -76,7 +76,7 @@ export default function AdminTicketsPage() {
                   </td>
                   <td className="p-4">
                     <span className={`inline-flex px-2 py-1 rounded text-xs font-bold ${
-                      ticket.status === 'ISSUED' || ticket.status === 'RESERVED' ? 'bg-green-500/20 text-green-400' :
+                      ticket.status === 'AVAILABLE' || ticket.status === 'VALID' || ticket.status === 'ISSUED' ? 'bg-green-500/20 text-green-400' :
                       ticket.status === 'USED' ? 'bg-slate-500/20 text-slate-400' :
                       'bg-red-500/20 text-red-400'
                     }`}>
@@ -85,7 +85,7 @@ export default function AdminTicketsPage() {
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {(ticket.status === 'ISSUED' || ticket.status === 'RESERVED') && (
+                      {(ticket.status === 'AVAILABLE' || ticket.status === 'VALID' || ticket.status === 'ISSUED') && (
                         <>
                           <button 
                             onClick={() => handleMarkUsed(ticket.id)}
