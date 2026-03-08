@@ -82,7 +82,7 @@ export async function createEvent(data: {
         images: data.images,
         highlights: data.highlights,
         status: "DRAFT" as any,
-        eventTicketTypes: {
+        ticketTypes: {
           create: data.ticketTypes.map((tt) => ({
             name: tt.name,
             basePrice: new Decimal(tt.basePrice),
@@ -97,7 +97,7 @@ export async function createEvent(data: {
               : null,
           })),
         } as any,
-        eventSeatings: data.seatingZones
+        seatingZones: data.seatingZones
           ? {
               create: data.seatingZones.map((sz) => ({
                 sectionName: sz.sectionName,
@@ -106,7 +106,7 @@ export async function createEvent(data: {
               })),
             } as any
           : undefined as any,
-        eventRefundPolicy: data.refundPolicy
+        refundPolicy: data.refundPolicy
           ? {
               create: {
                 cancellationDeadlineDays: data.refundPolicy.cancellationDeadlineDays,
@@ -121,9 +121,9 @@ export async function createEvent(data: {
           : undefined as any,
       } as any,
       include: {
-        eventTicketTypes: true,
-        eventSeatings: true,
-        eventRefundPolicy: true,
+        ticketTypes: true,
+        seatingZones: true,
+        refundPolicy: true,
       } as any,
     });
 
@@ -213,18 +213,18 @@ export async function getAdminEvents() {
   try {
     const events = await prisma.event.findMany({
       include: {
-        eventTicketTypes: {
+        ticketTypes: {
           include: {
             _count: {
               select: { tickets: true },
             },
           },
         },
-        eventSeatings: true,
+        seatingZones: true,
         tickets: {
-          where: { status: { in: ["ISSUED", "PENDING"] } },
+          where: { status: { in: ["ISSUED", "RESERVED"] } },
         },
-        eventRefundPolicy: true,
+        refundPolicy: true,
       } as any,
       orderBy: { createdAt: "desc" },
     });
@@ -232,9 +232,16 @@ export async function getAdminEvents() {
     const eventsFormatted = events.map((event: any) => ({
       ...event,
       ticketsSold: event.tickets.length,
-      ticketTypes: event.eventTicketTypes.map((tt: any) => ({
+      ticketTypes: event.ticketTypes.map((tt: any) => ({
         ...tt,
-        quantitySold: tt._count.tickets,
+        basePrice: Number(tt.basePrice),
+        earlyBirdPrice: tt.earlyBirdPrice ? Number(tt.earlyBirdPrice) : null,
+        surgeMultiplier: tt.surgeMultiplier ? Number(tt.surgeMultiplier) : null,
+        quantitySold: tt._count?.tickets || 0,
+      })),
+      seatingZones: event.seatingZones.map((sz: any) => ({
+        ...sz,
+        priceModifier: Number(sz.priceModifier),
       })),
     }));
 
@@ -247,7 +254,7 @@ export async function getAdminEvents() {
 
 // ============ CUSTOMER ACTIONS ============
 
-export async function getUpcomingEvents() {
+export async function getPublicEvents() {
   try {
     const events = await prisma.event.findMany({
       where: {
@@ -255,32 +262,41 @@ export async function getUpcomingEvents() {
         startDate: { gte: new Date() },
       },
       include: {
-        eventTicketTypes: true,
-        eventSeatings: true,
+        ticketTypes: true,
+        seatingZones: true,
         tickets: {
-          where: { status: { in: ["ISSUED" as any, "PENDING" as any] } },
+          where: { status: { in: ["ISSUED" as any, "RESERVED" as any] } },
         },
       } as any,
       orderBy: { startDate: "asc" },
     });
 
-    const formattedEvents = events.map((e: any) => {
-      const ticketsSold = e.tickets.filter((t: any) => t.status !== "CANCELLED" as any).length;
-      const capacityRemaining = e.totalCapacity - ticketsSold;
+    const formattedEvents = events.map((e) => {
+      const ticketsSold = e.tickets.filter((t) => (t.status as string) !== "CANCELLED").length;
+      const capacityRemaining = Number(e.totalCapacity) - ticketsSold;
       const isSoldOut = capacityRemaining <= 0;
+
+      const prices = e.ticketTypes.map((t: any) => {
+        const isEarlyBird = t.earlyBirdPrice && t.earlyBirdEndDate && new Date() < new Date(t.earlyBirdEndDate);
+        return isEarlyBird ? Number(t.earlyBirdPrice) : Number(t.basePrice);
+      });
 
       return {
         ...e,
         ticketsSold,
         capacityRemaining,
         isSoldOut,
-        basePrice: Math.min(
-          ...e.eventTicketTypes.map((t: any) =>
-            t.earlyBirdPrice && new Date() < (t.earlyBirdEndDate || new Date(0))
-              ? Number(t.earlyBirdPrice)
-              : Number(t.basePrice)
-          )
-        ),
+        basePrice: prices.length > 0 ? Math.min(...prices) : 0,
+        ticketTypes: e.ticketTypes.map((tt: any) => ({
+          ...tt,
+          basePrice: Number(tt.basePrice),
+          earlyBirdPrice: tt.earlyBirdPrice ? Number(tt.earlyBirdPrice) : null,
+          surgeMultiplier: tt.surgeMultiplier ? Number(tt.surgeMultiplier) : null,
+        })),
+        seatingZones: e.seatingZones.map((sz: any) => ({
+          ...sz,
+          priceModifier: Number(sz.priceModifier),
+        })),
       };
     });
 
@@ -296,8 +312,8 @@ export async function getEventBySlug(slug: string) {
     const event = await prisma.event.findUnique({
       where: { slug },
       include: {
-        eventTicketTypes: true,
-        eventSeatings: true,
+        ticketTypes: true,
+        seatingZones: true,
         tickets: true,
       } as any,
     });
@@ -309,16 +325,16 @@ export async function getEventBySlug(slug: string) {
 
     const formattedEvent = {
       ...event,
-      ticketTypes: (event as any).eventTicketTypes.map((t: any) => ({
+      ticketTypes: (event as any).ticketTypes.map((t: any) => ({
         ...t,
-        basePrice: typeof t.basePrice === 'object' && t.basePrice !== null ? Number(t.basePrice) : t.basePrice,
+        basePrice: Number(t.basePrice),
         earlyBirdPrice: t.earlyBirdPrice ? Number(t.earlyBirdPrice) : null,
         surgeMultiplier: t.surgeMultiplier ? Number(t.surgeMultiplier) : null,
         quantitySold: (event as any).tickets.filter((tick: any) => (tick as any).ticketTypeId === t.id && tick.status !== 'CANCELLED' as any).length,
       })),
-      seatingZones: (event as any).eventSeatings.map((z: any) => ({
+      seatingZones: (event as any).seatingZones.map((z: any) => ({
         ...z,
-        priceModifier: typeof z.priceModifier === 'object' && z.priceModifier !== null ? Number(z.priceModifier) : z.priceModifier,
+        priceModifier: Number(z.priceModifier),
       })),
       ticketsSold,
       capacityRemaining,
@@ -337,9 +353,9 @@ export async function getEventById(id: string) {
     const event = await prisma.event.findUnique({
       where: { id },
       include: {
-        eventTicketTypes: true,
-        eventSeatings: true,
-        eventRefundPolicy: true,
+        ticketTypes: true,
+        seatingZones: true,
+        refundPolicy: true,
       } as any,
     });
 
@@ -347,13 +363,13 @@ export async function getEventById(id: string) {
 
     const formattedEvent = {
       ...event,
-      ticketTypes: (event as any).eventTicketTypes.map((t: any) => ({
+      ticketTypes: (event as any).ticketTypes.map((t: any) => ({
         ...t,
         basePrice: Number(t.basePrice),
         earlyBirdPrice: t.earlyBirdPrice ? Number(t.earlyBirdPrice) : null,
         surgeMultiplier: t.surgeMultiplier ? Number(t.surgeMultiplier) : null,
       })),
-      seatingZones: (event as any).eventSeatings.map((z: any) => ({
+      seatingZones: (event as any).seatingZones.map((z: any) => ({
         ...z,
         priceModifier: Number(z.priceModifier),
       })),
@@ -409,7 +425,7 @@ export async function calculateTicketPrice(
     // Apply surge pricing
     if (ticketType.surgeThreshold && ticketType.surgeMultiplier) {
       // Fetch current quantity sold for this ticket type
-      const ticketsSold = await (prisma as any).ticket.count({
+      const ticketsSold = await prisma.ticket.count({
         where: {
           ticketTypeId: ticketType.id,
           status: { not: "CANCELLED" as any }
@@ -466,7 +482,7 @@ export async function createTicketBooking(data: {
       return { success: false, error: "Ticket type not found" };
     }
 
-    const ticketsSoldForType = await (prisma as any).ticket.count({
+    const ticketsSoldForType = await prisma.ticket.count({
       where: {
         ticketTypeId: data.ticketTypeId,
         status: { not: "CANCELLED" as any }
@@ -486,7 +502,7 @@ export async function createTicketBooking(data: {
         return { success: false, error: "Seating zone not found" };
       }
 
-      const ticketsSoldForZone = await (prisma as any).ticket.count({
+      const ticketsSoldForZone = await prisma.ticket.count({
         where: {
           seatSectionId: data.seatingZoneId,
           status: { not: "CANCELLED" as any }
@@ -569,11 +585,11 @@ export async function addToWaitlist(data: {
   quantity?: number;
 }) {
   try {
-    const waitlistCount = await (prisma as any).eventWaitlist.count({
+    const waitlistCount = await prisma.eventWaitlist.count({
       where: { eventId: data.eventId, ticketTypeId: data.ticketTypeId },
     });
 
-    const entry = await (prisma as any).eventWaitlist.create({
+    const entry = await prisma.eventWaitlist.create({
       data: {
         eventId: data.eventId,
         userId: data.userId,
@@ -593,7 +609,7 @@ export async function addToWaitlist(data: {
 
 export async function promoteFromWaitlist(waitlistId: string) {
   try {
-    const entry = await (prisma as any).eventWaitlist.update({
+    const entry = await prisma.eventWaitlist.update({
       where: { id: waitlistId },
       data: {
         status: "PROMOTED" as any,
@@ -614,22 +630,22 @@ export async function promoteFromWaitlist(waitlistId: string) {
 
 export async function processRefund(ticketId: string) {
   try {
-    const ticket = await (prisma as any).ticket.findUnique({
+    const ticket = await prisma.ticket.findUnique({
       where: { id: ticketId },
       include: {
         event: {
-          include: { eventRefundPolicy: true },
+          include: { refundPolicy: true },
         },
       } as any,
     });
 
     if (!ticket) throw new Error("Ticket not found");
     const eventWithPolicy = (ticket as any).event;
-    if (!eventWithPolicy.eventRefundPolicy) throw new Error("No refund policy defined");
+    if (!eventWithPolicy.refundPolicy) throw new Error("No refund policy defined");
 
     const now = new Date();
     const eventStart = new Date(eventWithPolicy.startDate);
-    const policy = eventWithPolicy.eventRefundPolicy;
+    const policy = eventWithPolicy.refundPolicy;
 
     const daysUntilEvent = Math.ceil(
       (eventStart.getTime() - now.getTime()) / (1000 * 3600 * 24)
@@ -648,7 +664,7 @@ export async function processRefund(ticketId: string) {
     const refundAmount = Number(ticket.pricePaid) * (refundPercentage / 100);
 
     // Update ticket and potentially trigger payment provider refund
-    await (prisma as any).ticket.update({
+    await prisma.ticket.update({
       where: { id: ticketId },
       data: {
         status: "REFUNDED" as any,
@@ -656,7 +672,7 @@ export async function processRefund(ticketId: string) {
     });
 
     // Update the associated booking status if it was the only ticket
-    const booking = await (prisma as any).booking.findUnique({
+    const booking = await prisma.booking.findUnique({
       where: { id: (ticket as any).bookingId },
       include: { tickets: true } as any
     });
@@ -738,7 +754,7 @@ export async function createBundledEventTourBooking(data: {
       });
 
       if (eventBooking) {
-        await (prisma as any).booking.update({
+        await prisma.booking.update({
           where: { id: eventBooking.id },
           data: {
             bundledTourBookingId: (tourResult as any).booking.id,

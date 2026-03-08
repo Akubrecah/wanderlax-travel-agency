@@ -10,7 +10,7 @@ export async function getUserTickets(userId: string) {
     });
     const dbUserId = clerkUser ? clerkUser.id : userId;
 
-    const tickets = await (prisma as any).ticket.findMany({
+    const tickets = await prisma.ticket.findMany({
       where: {
         userId: dbUserId,
       },
@@ -29,10 +29,12 @@ export async function getUserTickets(userId: string) {
       success: true, 
       tickets: tickets.map((t: any) => ({
         ...t,
+        pricePaid: Number(t.pricePaid),
         ticketType: {
           ...t.ticketType,
           basePrice: Number(t.ticketType.basePrice),
           earlyBirdPrice: t.ticketType.earlyBirdPrice ? Number(t.ticketType.earlyBirdPrice) : null,
+          surgeMultiplier: t.ticketType.surgeMultiplier ? Number(t.ticketType.surgeMultiplier) : null,
         }
       }))
     };
@@ -44,7 +46,7 @@ export async function getUserTickets(userId: string) {
 
 export async function getAllEventTickets() {
   try {
-    const tickets = await (prisma as any).ticket.findMany({
+    const tickets = await prisma.ticket.findMany({
       include: {
         user: true,
         event: true,
@@ -60,10 +62,12 @@ export async function getAllEventTickets() {
       success: true, 
       tickets: tickets.map((t: any) => ({
         ...t,
+        pricePaid: Number(t.pricePaid),
         ticketType: {
           ...t.ticketType,
           basePrice: Number(t.ticketType.basePrice),
           earlyBirdPrice: t.ticketType.earlyBirdPrice ? Number(t.ticketType.earlyBirdPrice) : null,
+          surgeMultiplier: t.ticketType.surgeMultiplier ? Number(t.ticketType.surgeMultiplier) : null,
         }
       }))
     };
@@ -75,7 +79,7 @@ export async function getAllEventTickets() {
 
 export async function cancelTicket(id: string) {
   try {
-    await (prisma as any).ticket.update({
+    await prisma.ticket.update({
       where: { id },
       data: { status: 'CANCELLED' as any },
     });
@@ -90,12 +94,12 @@ export async function cancelTicket(id: string) {
 
 export async function markTicketUsed(id: string) {
   try {
-    await (prisma as any).ticket.update({
+    await prisma.ticket.update({
       where: { id },
       data: { 
         status: 'USED' as any,
         issuedAt: new Date(), 
-      },
+      } as any,
     });
     revalidatePath('/admin/tickets');
     revalidatePath('/portal/tickets');

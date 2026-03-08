@@ -1,4 +1,4 @@
-import { getUpcomingEvents } from '@/app/actions/eventActions';
+import { getPublicEvents } from '@/app/actions/eventActions';
 import EventCard from '@/components/events/EventCard';
 
 export const metadata = {
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function EventsPage() {
-  const result = await getUpcomingEvents();
+  const result = await getPublicEvents();
 
   if (!result?.success) {
     return (

@@ -156,7 +156,7 @@ export function AdminEventsClient({ initialEvents }: { initialEvents: Event[] })
               </span>
             </div>
             <h3 className="text-2xl font-bold text-white">
-              {events.filter(e => e.status === 'PUBLISHED').length}
+              {events.filter(e => ['PUBLISHED', 'UPCOMING', 'ONGOING'].includes(e.status)).length}
             </h3>
           </div>
           <div className="bg-surface-dark p-6 rounded-xl border border-white/10">
@@ -199,7 +199,7 @@ export function AdminEventsClient({ initialEvents }: { initialEvents: Event[] })
               />
             </div>
             <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-              {['ALL', 'PUBLISHED', 'DRAFT', 'CANCELLED'].map(s => (
+              {['ALL', 'PUBLISHED', 'UPCOMING', 'ONGOING', 'DRAFT', 'CANCELLED'].map(s => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
@@ -238,6 +238,9 @@ export function AdminEventsClient({ initialEvents }: { initialEvents: Event[] })
                   filteredEvents.map((event) => {
                     const statusClass = {
                       PUBLISHED: 'bg-green-500/10 text-green-500 border-green-500/20',
+                      UPCOMING: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                      ONGOING: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+                      COMPLETED: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
                       DRAFT: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
                       CANCELLED: 'bg-red-500/10 text-red-500 border-red-500/20',
                     }[event.status as string] || 'bg-slate-500/10 text-slate-500 border-slate-500/20';
