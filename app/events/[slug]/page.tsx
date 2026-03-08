@@ -146,10 +146,10 @@ export default function EventDetailPage() {
         lastName: user.lastName || undefined,
       });
 
-      if (result.success) {
+      if (result.success && result.booking) {
         setBookingSuccess(true);
         setTimeout(() => {
-          router.push(`/events/${slug}/book`);
+          router.push(`/portal/book?bookingRef=${result.booking.bookingRef}`);
         }, 2000);
       } else {
         setBookingError(result.error || 'Failed to book tickets');
