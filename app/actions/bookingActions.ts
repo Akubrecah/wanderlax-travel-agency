@@ -41,7 +41,10 @@ export async function getAdminBookings() {
               }
             }
           }
-        }
+        },
+        event: true,
+        appointment: true,
+        payments: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -73,8 +76,55 @@ export async function updateBookingStatus(id: string, newStatus: BookingStatus) 
 
 export async function deleteBooking(id: string) {
   try {
-    await prisma.booking.delete({
-      where: { id }
+    const booking = await prisma.booking.findUnique({
+      where: { id },
+      include: {
+        carHireBooking: true,
+        hotelBooking: true,
+        tourBooking: true,
+      }
+    });
+
+    if (!booking) {
+      return { success: false, error: "Booking not found" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete linked payments
+      await tx.payment.deleteMany({
+        where: { bookingId: id }
+      });
+
+      // 2. Delete linked invoice
+      await tx.invoice.deleteMany({
+        where: { bookingId: id }
+      });
+
+      // 3. Delete the main booking record first if it's not a service-specific one
+      // Actually, we must delete the Booking record, but it has foreign keys to the service bookings
+      // In our schema, Booking has carHireBookingId, hotelBookingId, tourBookingId.
+      // So we should delete the main Booking record first, then the service-specific ones.
+      
+      await tx.booking.delete({
+        where: { id }
+      });
+
+      // 4. Delete service-specific bookings if they exist
+      if (booking.carHireBookingId) {
+        await tx.carHireBooking.delete({
+          where: { id: booking.carHireBookingId }
+        });
+      }
+      if (booking.hotelBookingId) {
+        await tx.hotelBooking.delete({
+          where: { id: booking.hotelBookingId }
+        });
+      }
+      if (booking.tourBookingId) {
+        await tx.tourBooking.delete({
+          where: { id: booking.tourBookingId }
+        });
+      }
     });
     
     revalidatePath("/admin/bookings");
@@ -120,11 +170,25 @@ export async function confirmBookingByRef(bookingRef: string) {
   try {
     const updated = await prisma.booking.update({
       where: { bookingRef },
-      data: { status: "CONFIRMED", paymentStatus: "PAID" }
+      data: { status: "COMPLETED", paymentStatus: "PAID" }
+    });
+
+    // Also update any pending payments associated with this booking
+    await prisma.payment.updateMany({
+      where: { 
+        bookingId: updated.id,
+        status: "PENDING"
+      },
+      data: { 
+        status: "PAID",
+        paidAt: new Date()
+      }
     });
     
     revalidatePath("/portal/dashboard");
     revalidatePath("/portal/tickets");
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
     return { success: true, booking: JSON.parse(JSON.stringify(updated)) };
   } catch (error) {
     console.error("Error confirming booking by ref:", error);
@@ -185,6 +249,7 @@ export async function createManualBooking(data: {
     });
 
     revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
     return { success: true, booking: JSON.parse(JSON.stringify(newBooking)) };
   } catch (error) {
     console.error("Error creating manual booking:", error);

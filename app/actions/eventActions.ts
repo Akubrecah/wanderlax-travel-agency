@@ -495,6 +495,7 @@ export async function createTicketBooking(data: {
   email: string;
   firstName?: string;
   lastName?: string;
+  ticketQuantity: number;
 }) {
   try {
     // 1. Validate availability
@@ -569,28 +570,38 @@ export async function createTicketBooking(data: {
           totalAmount: new Decimal(finalPrice),
           finalAmount: new Decimal(finalPrice),
           eventId: data.eventId,
-          ticketQuantity: 1,
+          ticketQuantity: data.ticketQuantity || 1,
         } as any,
       });
 
-      // Create Ticket
-      const ticket = await tx.ticket.create({
-        data: {
+      // Create Tickets using createMany for better performance
+      const ticketQuantity = data.ticketQuantity || 1;
+      const ticketData = [];
+      for (let i = 0; i < ticketQuantity; i++) {
+        ticketData.push({
           eventId: data.eventId,
           userId: user!.id,
           ticketTypeId: data.ticketTypeId,
           seatSectionId: data.seatingZoneId,
-          attendeeName: data.attendeeName,
+          attendeeName: i === 0 ? data.attendeeName : `${data.attendeeName} (Guest ${i})`,
           attendeeEmail: data.attendeeEmail,
-          pricePaid: new Decimal(finalPrice),
+          pricePaid: new Decimal(finalPrice / ticketQuantity),
           status: "ISSUED" as any,
-        } as any,
+        });
+      }
+
+      await tx.ticket.createMany({
+        data: ticketData,
       });
 
-      return { book, ticket };
+      return { book };
+    }, {
+      timeout: 30000 // Increase timeout to 30s to prevent "Transaction already closed" error
     });
 
     revalidatePath("/portal/tickets");
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
     
     return { success: true, booking: JSON.parse(JSON.stringify(booking.book)) };
   } catch (error) {
@@ -755,6 +766,7 @@ export async function createBundledEventTourBooking(data: {
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
+      ticketQuantity: 1, // Bundled events are currently treated as 1 lead ticket
     });
 
     if (!ticketResult.success) {

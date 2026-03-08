@@ -24,6 +24,7 @@ model User {
   appointmentsConsultant Appointment[]    @relation("ConsultantAppointments")
   bookings               Booking[]
   carHireBookings        CarHireBooking[]
+  eventWaitlistEntries   EventWaitlist[]
   hotelBookings          HotelBooking[]
   inquiries              Inquiry[]
   inquiryMessages        InquiryMessage[]
@@ -32,10 +33,9 @@ model User {
   reviews                Review[]
   sessions               Session[]
   staffProfile           StaffProfile?
+  tickets                Ticket[]
   tourBookings           TourBooking[]
   wishlistItems          WishlistItem[]
-  tickets                Ticket[]
-  eventWaitlistEntries   EventWaitlist[]
 
   @@index([email])
   @@index([role])
@@ -71,12 +71,12 @@ model StaffProfile {
 model StaffPermission {
   id             String       @id @default(uuid())
   staffProfileId String
-  module         String
-  canView        Boolean      @default(false)
   canCreate      Boolean      @default(false)
-  canEdit        Boolean      @default(false)
   canDelete      Boolean      @default(false)
+  canEdit        Boolean      @default(false)
   canExport      Boolean      @default(false)
+  canView        Boolean      @default(false)
+  module         String
   staffProfile   StaffProfile @relation(fields: [staffProfileId], references: [id], onDelete: Cascade)
 
   @@unique([staffProfileId, module])
@@ -259,10 +259,10 @@ model TourPackage {
   included       String[]
   excluded       String[]
   images         String[]
-  featured       Boolean            @default(false)
   status         String             @default("ACTIVE")
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+  featured       Boolean            @default(false)
   reviews        Review[]
   availabilities TourAvailability[]
   bookings       TourBooking[]
@@ -337,34 +337,34 @@ model TourTraveler {
 }
 
 model Booking {
-  id               String          @id @default(uuid())
-  bookingRef       String          @unique
-  userId           String
-  serviceType      ServiceType
-  status           BookingStatus   @default(PENDING)
-  paymentStatus    PaymentStatus   @default(PENDING)
-  totalAmount      Decimal         @db.Decimal(10, 2)
-  discountAmount   Decimal         @default(0) @db.Decimal(10, 2)
-  taxAmount        Decimal         @default(0) @db.Decimal(10, 2)
-  finalAmount      Decimal         @db.Decimal(10, 2)
-  currency         String          @default("USD")
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  carHireBookingId String?         @unique
-  hotelBookingId   String?         @unique
-  tourBookingId    String?         @unique
-  appointmentId    String?         @unique
-  eventBookingId   String?         @unique
-  appointment      Appointment?    @relation("AppointmentBooking", fields: [appointmentId], references: [id])
-  carHireBooking   CarHireBooking? @relation("CarBooking", fields: [carHireBookingId], references: [id])
-  hotelBooking     HotelBooking?   @relation("HotelBooking", fields: [hotelBookingId], references: [id])
-  tourBooking       TourBooking?    @relation("TourBooking", fields: [tourBookingId], references: [id])
-  user              User            @relation(fields: [userId], references: [id])
-  invoice           Invoice?
-  payments          Payment[]
-  eventId           String?         
-  ticketQuantity    Int?
-  bundledTourBookingId String?       
+  id                   String          @id @default(uuid())
+  bookingRef           String          @unique
+  userId               String
+  serviceType          ServiceType
+  status               BookingStatus   @default(PENDING)
+  paymentStatus        PaymentStatus   @default(PENDING)
+  totalAmount          Decimal         @db.Decimal(10, 2)
+  discountAmount       Decimal         @default(0) @db.Decimal(10, 2)
+  taxAmount            Decimal         @default(0) @db.Decimal(10, 2)
+  finalAmount          Decimal         @db.Decimal(10, 2)
+  currency             String          @default("USD")
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  carHireBookingId     String?         @unique
+  hotelBookingId       String?         @unique
+  tourBookingId        String?         @unique
+  appointmentId        String?         @unique
+  bundledTourBookingId String?
+  eventId              String?
+  ticketQuantity       Int?
+  appointment          Appointment?    @relation("AppointmentBooking", fields: [appointmentId], references: [id])
+  carHireBooking       CarHireBooking? @relation("CarBooking", fields: [carHireBookingId], references: [id])
+  event                Event?          @relation(fields: [eventId], references: [id])
+  hotelBooking         HotelBooking?   @relation("HotelBooking", fields: [hotelBookingId], references: [id])
+  tourBooking          TourBooking?    @relation("TourBooking", fields: [tourBookingId], references: [id])
+  user                 User            @relation(fields: [userId], references: [id])
+  invoice              Invoice?
+  payments             Payment[]
 
   @@index([userId])
   @@index([serviceType])
@@ -384,6 +384,7 @@ model Payment {
   providerResponse Json?
   paidAt           DateTime?
   createdAt        DateTime      @default(now())
+  failureReason    String?
   booking          Booking       @relation(fields: [bookingId], references: [id])
   user             User          @relation(fields: [userId], references: [id])
 
@@ -557,26 +558,27 @@ model SiteSetting {
 }
 
 model Event {
-  id              String          @id @default(uuid())
-  title           String
-  slug            String          @unique
-  description     String
-  destination     String
-  startDate       DateTime
-  endDate         DateTime
-  totalCapacity   Int
-  category        EventCategory   @default(OTHER)
-  status          EventStatus     @default(DRAFT)
-  organizer       String?
-  images          String[]
-  highlights      String[]
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  ticketTypes     EventTicketType[]
-  seatingZones    EventSeating[]
-  tickets         Ticket[]
-  waitlist        EventWaitlist[]
-  refundPolicy    EventRefundPolicy?
+  id            String             @id @default(uuid())
+  title         String
+  slug          String             @unique
+  description   String
+  category      EventCategory      @default(OTHER)
+  status        EventStatus        @default(DRAFT)
+  startDate     DateTime
+  endDate       DateTime
+  images        String[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  destination   String
+  highlights    String[]
+  organizer     String?
+  totalCapacity Int
+  bookings      Booking[]
+  refundPolicy  EventRefundPolicy?
+  seatingZones  EventSeating[]
+  ticketTypes   EventTicketType[]
+  waitlist      EventWaitlist[]
+  tickets       Ticket[]
 
   @@index([slug])
   @@index([status])
@@ -585,57 +587,57 @@ model Event {
 }
 
 model EventTicketType {
-  id                    String        @id @default(uuid())
-  eventId               String
-  name                  String
-  basePrice             Decimal       @db.Decimal(10, 2)
-  maxQuantity           Int
-  earlyBirdEndDate      DateTime?
-  earlyBirdPrice        Decimal?      @db.Decimal(10, 2)
-  surgeThreshold        Int?
-  surgeMultiplier       Decimal?      @db.Decimal(5, 2)
-  quantitySold          Int           @default(0)
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  event                 Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  tickets               Ticket[]
+  id               String    @id @default(uuid())
+  eventId          String
+  name             String
+  basePrice        Decimal   @db.Decimal(10, 2)
+  maxQuantity      Int
+  earlyBirdEndDate DateTime?
+  earlyBirdPrice   Decimal?  @db.Decimal(10, 2)
+  surgeThreshold   Int?
+  surgeMultiplier  Decimal?  @db.Decimal(5, 2)
+  quantitySold     Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  event            Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets          Ticket[]
 
   @@index([eventId])
 }
 
 model EventSeating {
-  id            String        @id @default(uuid())
+  id            String   @id @default(uuid())
   eventId       String
   sectionName   String
   capacity      Int
-  bookedCount   Int           @default(0)
-  priceModifier Decimal       @default(1.0) @db.Decimal(5, 2)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  event         Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookedCount   Int      @default(0)
+  priceModifier Decimal  @default(1.0) @db.Decimal(5, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   tickets       Ticket[]
 
   @@index([eventId])
 }
 
 model Ticket {
-  id              String        @id @default(uuid())
-  eventId         String
-  userId          String
-  ticketTypeId    String
-  seatSectionId   String?
-  attendeeName    String
-  attendeeEmail   String
-  pricePaid       Decimal       @db.Decimal(10, 2)
-  status          TicketStatus  @default(AVAILABLE)
-  qrCode          String?
-  createdAt       DateTime      @default(now())
-  issuedAt        DateTime?
-  refundedAt      DateTime?
-  event           Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ticketType      EventTicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
-  seatSection     EventSeating? @relation(fields: [seatSectionId], references: [id], onDelete: SetNull)
+  id            String          @id @default(uuid())
+  attendeeName  String
+  attendeeEmail String
+  status        TicketStatus    @default(AVAILABLE)
+  createdAt     DateTime        @default(now())
+  eventId       String
+  issuedAt      DateTime?
+  pricePaid     Decimal         @db.Decimal(10, 2)
+  qrCode        String?
+  refundedAt    DateTime?
+  seatSectionId String?
+  ticketTypeId  String
+  userId        String
+  event         Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  seatSection   EventSeating?   @relation(fields: [seatSectionId], references: [id])
+  ticketType    EventTicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([eventId])
   @@index([userId])
@@ -644,18 +646,18 @@ model Ticket {
 }
 
 model EventWaitlist {
-  id            String          @id @default(uuid())
-  eventId       String
-  userId        String
-  ticketTypeId  String
-  quantity      Int             @default(1)
-  position      Int
-  status        WaitlistStatus  @default(WAITING)
-  dateAdded     DateTime        @default(now())
-  promotedAt    DateTime?
-  expiredAt     DateTime?
-  event         Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String         @id @default(uuid())
+  eventId      String
+  userId       String
+  ticketTypeId String
+  quantity     Int            @default(1)
+  position     Int
+  status       WaitlistStatus @default(WAITING)
+  dateAdded    DateTime       @default(now())
+  promotedAt   DateTime?
+  expiredAt    DateTime?
+  event        Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId, ticketTypeId])
   @@index([eventId])
@@ -664,17 +666,16 @@ model EventWaitlist {
 }
 
 model EventRefundPolicy {
-  id                          String   @id @default(uuid())
-  eventId                     String   @unique
-  cancellationDeadlineDays    Int      @default(7)
-  refundPercentageBeforeDeadline Int   @default(100)
-  refundPercentageAfterDeadline Int    @default(50)
-  refundPercentageAfterEvent  Int      @default(0)
-  createdAt                   DateTime @default(now())
-  updatedAt                   DateTime @updatedAt
-  event                       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id                             String   @id @default(uuid())
+  eventId                        String   @unique
+  cancellationDeadlineDays       Int      @default(7)
+  refundPercentageBeforeDeadline Int      @default(100)
+  refundPercentageAfterDeadline  Int      @default(50)
+  refundPercentageAfterEvent     Int      @default(0)
+  createdAt                      DateTime @default(now())
+  updatedAt                      DateTime @updatedAt
+  event                          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
-
 
 enum Role {
   CUSTOMER
@@ -682,10 +683,6 @@ enum Role {
   ADMIN
   SUPER_ADMIN
 }
-
-
-
-// Enums removed: ModuleType, PermissionLevel
 
 enum BookingStatus {
   PENDING
@@ -779,7 +776,6 @@ enum InquiryStatus {
   RESOLVED
 }
 
-
 enum EventStatus {
   DRAFT
   PUBLISHED
@@ -794,20 +790,20 @@ enum EventCategory {
   CONCERT
   EXPERIENCE
   WORKSHOP
+  OTHER
   FESTIVAL
   EXHIBITION
   GENERAL
-  OTHER
 }
 
 enum TicketStatus {
   AVAILABLE
   RESERVED
   ISSUED
-  VALID
-  USED
   REFUNDED
   CANCELLED
+  VALID
+  USED
 }
 
 enum WaitlistStatus {
@@ -816,4 +812,3 @@ enum WaitlistStatus {
   EXPIRED
   CLOSED
 }
-

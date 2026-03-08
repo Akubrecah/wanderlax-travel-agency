@@ -7,6 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import { createTourBooking, createHotelBooking, createCarHireBooking, getBookingByRef, confirmBookingByRef } from '@/app/actions/bookingActions';
 import { getHotelBySlug, getRoomById } from '@/app/actions/hotelActions';
 import { getCarById } from '@/app/actions/carActions';
+import { StripePaymentWrapper } from '@/components/portal/StripeCheckoutForm';
 
 const tourData: Record<string, { price: string; duration: string; description: string; image: string }> = {
   'Maldives Escape': {
@@ -95,12 +96,26 @@ function BookingFormContent() {
 
   React.useEffect(() => {
     async function fetchData() {
+      const paymentIntentStatus = searchParams.get('payment_intent_status');
+
       if (bookingRef) {
         setIsLoadingData(true);
         try {
           const res = await getBookingByRef(bookingRef);
           if (res.success) {
              setExistingBooking(res.booking);
+
+             // Handle successful payment redirect
+             if (paymentIntentStatus === 'success' && res.booking.paymentStatus !== 'PAID') {
+               const confirmRes = await confirmBookingByRef(bookingRef);
+               if (confirmRes.success) {
+                  setSubmitted(true);
+               } else {
+                  setError("Payment succeeded, but we couldn't confirm the booking. Please contact support.");
+               }
+             } else if (paymentIntentStatus === 'success' && res.booking.paymentStatus === 'PAID') {
+                 setSubmitted(true);
+             }
           }
         } catch (err) {
           console.error("Error fetching existing booking:", err);
@@ -137,7 +152,7 @@ function BookingFormContent() {
       }
     }
     fetchData();
-  }, [hotelSlug, roomId, carId, bookingRef]);
+  }, [hotelSlug, roomId, carId, bookingRef, searchParams]);
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -326,23 +341,44 @@ function BookingFormContent() {
               </section>
 
               {/* Trip or Payment Details */}
-              <form onSubmit={handleSubmit}>
-                <section className="flex flex-col gap-6">
-                  {existingBooking ? (
-                    <>
-                      <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
-                        <span className="material-symbols-outlined text-primary">payments</span>
-                        <h2 className="text-xl font-bold text-white">Payment Details</h2>
-                      </div>
-                      <div className="bg-background-dark p-6 border border-slate-700 rounded-xl space-y-4">
-                        <p className="text-slate-400">You are about to securely pay for and confirm your booking reservation.</p>
-                        <div className="flex justify-between items-center text-lg font-bold border-t border-slate-700 pt-4 mt-6">
-                          <span className="text-white">Total Amount</span>
-                          <span className="text-green-500 font-extrabold text-2xl">${Number(existingBooking.finalAmount).toFixed(2)}</span>
+              <section className="flex flex-col gap-6">
+                {existingBooking ? (
+                  <>
+                    <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
+                      <span className="material-symbols-outlined text-primary">payments</span>
+                      <h2 className="text-xl font-bold text-white">Payment Details</h2>
+                    </div>
+                    {existingBooking.paymentStatus === "PAID" ? (
+                      <div className="bg-green-500/10 border border-green-500/30 p-6 rounded-xl flex items-center justify-center gap-4">
+                        <span className="material-symbols-outlined text-green-500 text-3xl">check_circle</span>
+                        <div className="text-white">
+                          <p className="font-bold text-lg">Booking Fully Paid</p>
+                          <p className="text-sm text-slate-400">This booking has already been paid for securely.</p>
                         </div>
                       </div>
-                    </>
-                  ) : (
+                    ) : (
+                      <>
+                        <div className="bg-background-dark p-6 border border-slate-700 rounded-xl space-y-4">
+                          <p className="text-slate-400">You are about to securely pay for and confirm your booking reservation.</p>
+                          <div className="flex justify-between items-center text-lg font-bold border-t border-slate-700 pt-4 mt-6">
+                            <span className="text-white">Total Amount</span>
+                            <span className="text-green-500 font-extrabold text-2xl">${Number(existingBooking.finalAmount).toFixed(2)}</span>
+                          </div>
+                        </div>
+                        <StripePaymentWrapper 
+                          bookingRef={existingBooking.bookingRef}
+                          amount={Number(existingBooking.finalAmount)}
+                          serviceType={existingBooking.serviceType}
+                          onSuccess={async () => {
+                            await confirmBookingByRef(existingBooking.bookingRef);
+                            setSubmitted(true);
+                          }}
+                        />
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <form onSubmit={handleSubmit}>
                     <>
                       <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
                         <span className="material-symbols-outlined text-primary">{car ? 'directions_car' : 'calendar_month'}</span>
@@ -429,27 +465,27 @@ function BookingFormContent() {
                         />
                       </div>
                     </>
-                  )}
 
-                  {error && (
-                    <div className="bg-red-500/10 border border-red-500/30 text-red-500 p-4 rounded-xl text-sm">
-                      {error}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || (!existingBooking && !tour && !hotel && !car)}
-                    className="w-full bg-primary hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-4 rounded-xl shadow-[0_0_20px_rgba(195,9,9,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-lg mt-4"
-                  >
-                    {isSubmitting ? (
-                      <div className="animate-spin size-5 border-2 border-white border-t-transparent rounded-full"></div>
-                    ) : (
-                      <span className="material-symbols-outlined">{existingBooking ? 'payments' : 'bookmark_check'}</span>
+                    {error && (
+                      <div className="bg-red-500/10 border border-red-500/30 text-red-500 p-4 rounded-xl text-sm mt-6">
+                        {error}
+                      </div>
                     )}
-                    {isSubmitting ? 'Processing...' : (existingBooking ? 'Confirm & Secure Payment' : 'Confirm Booking Request')}
-                  </button>
-                </section>
-              </form>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || (!tour && !hotel && !car)}
+                      className="w-full bg-primary hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-4 rounded-xl shadow-[0_0_20px_rgba(195,9,9,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-lg mt-6"
+                    >
+                      {isSubmitting ? (
+                        <div className="animate-spin size-5 border-2 border-white border-t-transparent rounded-full"></div>
+                      ) : (
+                        <span className="material-symbols-outlined">bookmark_check</span>
+                      )}
+                      {isSubmitting ? 'Processing...' : 'Confirm Booking Request'}
+                    </button>
+                  </form>
+                )}
+              </section>
             </div>
 
           {/* Right Column: Tour Summary */}

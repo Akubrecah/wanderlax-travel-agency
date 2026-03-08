@@ -12,13 +12,17 @@ export default async function AdminLayout({
   const userId = authObject?.userId ?? null;
   
   let user = null;
-  try {
-    if (userId) {
+  if (userId) {
+    try {
       const client = await clerkClient();
       user = await client.users.getUser(userId);
+    } catch (err: unknown) {
+      // Transient Clerk API errors (network hiccup, rate limit) should not crash the layout.
+      // If we can't verify the user, redirect to login for safety.
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Clerk getUser() Error in AdminLayout:", message);
+      redirect('/portal/login');
     }
-  } catch (err) {
-    console.error("Clerk getUser() Error in AdminLayout:", err);
   }
 
   // If not authenticated, redirect to login

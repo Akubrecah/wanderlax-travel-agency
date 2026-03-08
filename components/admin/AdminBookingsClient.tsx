@@ -91,14 +91,38 @@ export function AdminBookingsClient({ initialBookings }: AdminBookingsClientProp
           dest: booking.tourBooking?.tourPackage?.title || "Custom Tour",
           subDest: booking.tourBooking?.tourPackage?.destination?.name || ""
         };
+      case "EVENT":
+        return {
+          icon: "event",
+          name: "Event Ticket",
+          dest: booking.event?.title || "Special Event",
+          subDest: booking.event?.destination || "Event Location"
+        };
+      case "APPOINTMENT":
+        return {
+          icon: "schedule",
+          name: "Service Appt",
+          dest: booking.appointment?.topic || "Service Appointment",
+          subDest: booking.appointment?.scheduledAt ? new Date(booking.appointment.scheduledAt).toLocaleTimeString() : "TBD"
+        };
       default:
         return {
           icon: "help",
           name: booking.serviceType,
-          dest: "Various",
-          subDest: ""
+          dest: "General Booking",
+          subDest: booking.bookingRef
         };
     }
+  };
+
+  const getBookingDate = (booking: any) => {
+    const date = booking.carHireBooking?.pickupDate || 
+                 booking.hotelBooking?.checkInDate || 
+                 booking.tourBooking?.startDate || 
+                 booking.event?.startDate || 
+                 booking.appointment?.scheduledAt || 
+                 booking.createdAt;
+    return new Date(date).toLocaleDateString();
   };
 
   return (
@@ -160,7 +184,7 @@ export function AdminBookingsClient({ initialBookings }: AdminBookingsClientProp
                       </div>
 
                       <div className="flex flex-col justify-center">
-                        <p className="text-slate-300 text-sm">{new Date(booking.startDate).toLocaleDateString()}</p>
+                        <p className="text-slate-300 text-sm">{getBookingDate(booking)}</p>
                         <p className="text-slate-500 text-[10px] uppercase">Start Date</p>
                       </div>
 
@@ -169,6 +193,14 @@ export function AdminBookingsClient({ initialBookings }: AdminBookingsClientProp
                           {booking.status}
                         </div>
                         <p className="text-slate-500 text-[10px] uppercase mt-1">Status</p>
+                        
+                        {/* Show failure reason if available */}
+                        {booking.paymentStatus === 'FAILED' && booking.payments?.[0]?.failureReason && (
+                          <div className="mt-2 p-1.5 bg-red-500/10 border border-red-500/20 rounded text-[9px] text-red-400 max-w-[150px] leading-tight flex items-start gap-1">
+                            <span className="material-symbols-outlined text-[12px] mt-0.5">error</span>
+                            <span>{booking.payments[0].failureReason}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

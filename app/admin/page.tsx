@@ -15,6 +15,8 @@ type AdminBooking = Booking & {
   tourBooking: (TourBooking & { tourPackage: { title: string; destination: { name: string; country: string; images: string[] } } }) | null;
   hotelBooking: (HotelBooking & { hotel: { name: string; destination: { name: string; country: string; images: string[] } }; room: { name: string } }) | null;
   carHireBooking: (CarHireBooking & { car: { model: string } }) | null;
+  event: { title: string; destination: string } | null;
+  payments: { status: string; failureReason: string | null }[];
 };
 
 export default function WanderluxAdminDashboardOverviewPage() {
@@ -45,9 +47,18 @@ export default function WanderluxAdminDashboardOverviewPage() {
   }, []);
 
   const totalBookings = bookings.length;
-  const totalRevenue = bookings.reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+  // Calculate revenue from PAID payments or COMPLETED/CONFIRMED bookings with totals
+  const totalRevenue = bookings.reduce((sum, b) => {
+    // Check if there are any PAID payments for this booking
+    const hasPaidPayment = b.payments?.some(p => p.status === 'PAID');
+    if (hasPaidPayment || b.paymentStatus === 'PAID' || b.status === 'COMPLETED') {
+      return sum + (Number(b.totalAmount) || 0);
+    }
+    return sum;
+  }, 0);
+  
   const pendingBookings = bookings.filter(b => b.status === 'PENDING').length;
-  const confirmedBookings = bookings.filter(b => b.status === 'CONFIRMED' || (b.status as string) === 'COMPLETED').length;
+  const confirmedBookings = bookings.filter(b => b.status === 'CONFIRMED' || b.status === 'COMPLETED').length;
 
   const toggleDropdown = (id: number) => {
     if (openDropdownId === id) {
@@ -441,6 +452,7 @@ export default function WanderluxAdminDashboardOverviewPage() {
               const serviceName = booking.tourBooking?.tourPackage?.title || 
                                  booking.hotelBooking?.hotel?.name || 
                                  booking.carHireBooking?.car?.model || 
+                                 booking.event?.title ||
                                  booking.serviceType.replace('_', ' ');
               const date = new Date(booking.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               
@@ -463,10 +475,18 @@ export default function WanderluxAdminDashboardOverviewPage() {
                   <td className="p-4 text-slate-400">{date}</td>
                   <td className="p-4 text-white font-medium">${Number(booking.totalAmount).toLocaleString()}</td>
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[booking.status] || 'bg-slate-500/10 text-slate-500 border-slate-500/20'}`}>
+                  <div className="flex flex-col">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border w-fit ${statusColors[booking.status] || 'bg-slate-500/10 text-slate-500 border-slate-500/20'}`}>
                       {booking.status}
                     </span>
-                  </td>
+                    {booking.paymentStatus === 'FAILED' && booking.payments?.[0]?.failureReason && (
+                      <span className="text-[10px] text-red-400 mt-1 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[12px]">error</span>
+                        {booking.payments[0].failureReason}
+                      </span>
+                    )}
+                  </div>
+                </td>
                   <td className="p-4 text-right">
                     <div className="relative">
                       <button 

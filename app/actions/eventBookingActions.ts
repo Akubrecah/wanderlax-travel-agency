@@ -169,27 +169,34 @@ export async function createEventBooking(data: {
       });
 
       console.log('Creating tickets...', data.attendees.length);
-      for (const attendee of data.attendees) {
-        if (!attendee.name || !attendee.email) continue;
-        await tx.ticket.create({
-          data: {
-            eventId: data.eventId,
-            userId: user!.id,
-            ticketTypeId: ticketTypeId,
-            attendeeName: attendee.name,
-            attendeeEmail: attendee.email,
-            pricePaid: pricePerTicket,
-            status: "ISSUED",
-          },
+      const ticketData = data.attendees
+        .filter(attendee => attendee.name && attendee.email)
+        .map(attendee => ({
+          eventId: data.eventId,
+          userId: user!.id,
+          ticketTypeId: ticketTypeId,
+          attendeeName: attendee.name,
+          attendeeEmail: attendee.email,
+          pricePaid: pricePerTicket,
+          status: "ISSUED" as any,
+        }));
+
+      if (ticketData.length > 0) {
+        await tx.ticket.createMany({
+          data: ticketData,
         });
       }
 
       console.log('Tickets created successfully.');
       return book;
+    }, {
+      timeout: 30000 // Increase timeout to 30s
     });
 
-    console.log('Transaction succeeded, revalidating path...');
+    console.log('Transaction succeeded, revalidating paths...');
     revalidatePath("/portal/tickets");
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
     return { success: true, booking: JSON.parse(JSON.stringify(booking)) };
   } catch (error) {
     console.error("Error creating event booking:", error);

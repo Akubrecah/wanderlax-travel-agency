@@ -92,7 +92,10 @@ export async function updatePaymentStatus(paymentId: string, status: PaymentStat
     if (payment.bookingId) {
        await prisma.booking.update({
          where: { id: payment.bookingId },
-         data: { paymentStatus: status }
+         data: { 
+           paymentStatus: status,
+           status: status === "PAID" ? "COMPLETED" : undefined 
+         }
        });
     }
 
@@ -104,5 +107,153 @@ export async function updatePaymentStatus(paymentId: string, status: PaymentStat
   } catch (error: unknown) {
     console.error("Error updating payment status:", error);
     return { success: false, error: error instanceof Error ? error.message : "Failed to update payment status" };
+  }
+}
+export async function recordStripePayment(data: {
+  bookingId: string;
+  amount: number;
+  currency: string;
+  transactionId: string;
+  providerResponse?: unknown;
+}) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: data.bookingId }
+    });
+
+    if (!booking) {
+      throw new Error(`Booking not found: ${data.bookingId}`);
+    }
+
+    // Check if there's already a PENDING payment for this booking
+    // This happens because many booking flows create a PENDING payment first
+    const existingPendingPayment = await prisma.payment.findFirst({
+      where: {
+        bookingId: data.bookingId,
+        status: "PENDING"
+      }
+    });
+
+    let payment;
+    if (existingPendingPayment) {
+      // Update existing pending payment instead of creating a duplicate
+      payment = await prisma.payment.update({
+        where: { id: existingPendingPayment.id },
+        data: {
+          amount: data.amount,
+          currency: data.currency.toUpperCase(),
+          method: "STRIPE",
+          status: "PAID",
+          transactionId: data.transactionId,
+          providerResponse: data.providerResponse as any,
+          paidAt: new Date(),
+        }
+      });
+    } else {
+      // Create new payment entry
+      payment = await prisma.payment.create({
+        data: {
+          bookingId: data.bookingId,
+          userId: booking.userId,
+          amount: data.amount,
+          currency: data.currency.toUpperCase(),
+          method: "STRIPE",
+          status: "PAID",
+          transactionId: data.transactionId,
+          providerResponse: data.providerResponse as any,
+          paidAt: new Date(),
+        }
+      });
+    }
+
+    // Also ensure booking status is updated to COMPLETED if it wasn't already
+    await prisma.booking.update({
+      where: { id: data.bookingId },
+      data: { 
+        paymentStatus: "PAID",
+        status: "COMPLETED"
+      }
+    });
+
+    revalidatePath('/admin/payments');
+    revalidatePath('/admin/bookings');
+    
+    return { success: true, payment: JSON.parse(JSON.stringify(payment)) };
+  } catch (error: unknown) {
+    console.error("Error recording stripe payment:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Failed to record payment" };
+  }
+}
+export async function recordStripeFailure(data: {
+  bookingId: string;
+  amount: number;
+  currency: string;
+  transactionId: string;
+  failureReason: string;
+  providerResponse?: unknown;
+}) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: data.bookingId }
+    });
+
+    if (!booking) {
+      throw new Error(`Booking not found: ${data.bookingId}`);
+    }
+
+    // Check if there's already a PENDING payment for this booking
+    const existingPendingPayment = await prisma.payment.findFirst({
+      where: {
+        bookingId: data.bookingId,
+        status: "PENDING"
+      }
+    });
+
+    let payment;
+    if (existingPendingPayment) {
+      payment = await prisma.payment.update({
+        where: { id: existingPendingPayment.id },
+        data: {
+          amount: data.amount,
+          currency: data.currency.toUpperCase(),
+          method: "STRIPE",
+          status: "FAILED",
+          transactionId: data.transactionId,
+          failureReason: data.failureReason,
+          providerResponse: data.providerResponse as any,
+        }
+      });
+    } else {
+      payment = await prisma.payment.create({
+        data: {
+          bookingId: data.bookingId,
+          userId: booking.userId,
+          amount: data.amount,
+          currency: data.currency.toUpperCase(),
+          method: "STRIPE",
+          status: "FAILED",
+          transactionId: data.transactionId,
+          failureReason: data.failureReason,
+          providerResponse: data.providerResponse as any,
+        }
+      });
+    }
+
+    // Also update booking status to FAILED
+    await prisma.booking.update({
+      where: { id: data.bookingId },
+      data: { 
+        paymentStatus: "FAILED",
+      }
+    });
+
+    revalidatePath('/admin/payments');
+    revalidatePath('/admin/bookings');
+    revalidatePath('/admin');
+    
+    return { success: true, payment: JSON.parse(JSON.stringify(payment)) };
+  } catch (error: unknown) {
+    console.error("Error recording stripe failure:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Failed to record payment failure" };
   }
 }

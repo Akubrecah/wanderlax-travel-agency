@@ -111,12 +111,12 @@ export default function EventDetailPage() {
 
   // Update attendee details when quantity changes
   useEffect(() => {
-    if (ticketQuantity > 0) {
+    setAttendeeDetails((prev) => {
       const newAttendees = Array(ticketQuantity).fill(null).map((_, i) => 
-        attendeeDetails[i] || { name: '', email: '' }
+        prev[i] || { name: '', email: '' }
       );
-      setAttendeeDetails(newAttendees);
-    }
+      return newAttendees;
+    });
   }, [ticketQuantity]);
 
   const handleBookTickets = async () => {
@@ -125,7 +125,8 @@ export default function EventDetailPage() {
       return;
     }
 
-    if (attendeeDetails.some((a) => !a.name.trim() || !a.email.trim())) {
+    const leadAttendee = attendeeDetails[0];
+    if (!leadAttendee || !leadAttendee.name?.trim() || !leadAttendee.email?.trim()) {
       setBookingError('Please fill in all attendee details');
       return;
     }
@@ -138,12 +139,13 @@ export default function EventDetailPage() {
         eventId: event!.id,
         ticketTypeId: selectedTicketType,
         seatingZoneId: selectedSeating || undefined,
-        attendeeName: attendeeDetails[0].name, // Using first attendee as primary for record
-        attendeeEmail: attendeeDetails[0].email,
+        attendeeName: leadAttendee.name.trim(),
+        attendeeEmail: leadAttendee.email.trim(),
         clerkId: user.id,
-        email: user.primaryEmailAddress?.emailAddress || '',
+        email: user.primaryEmailAddress?.emailAddress || user.emailAddresses[0]?.emailAddress || '',
         firstName: user.firstName || undefined,
         lastName: user.lastName || undefined,
+        ticketQuantity: ticketQuantity,
       });
 
       if (result.success && result.booking) {
@@ -224,7 +226,6 @@ export default function EventDetailPage() {
   const ticketPrice = selectedTicket ? getTicketPrice(selectedTicket) : 0;
   const totalPrice = ticketPrice * ticketQuantity;
   const startDate = new Date(event.startDate);
-  const endDate = new Date(event.endDate);
 
   return (
     <div className="min-h-screen bg-black text-white pb-32">
@@ -295,7 +296,7 @@ export default function EventDetailPage() {
 
             {event.highlights && event.highlights.length > 0 && (
               <section>
-                <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">What's Included</h2>
+                <h2 className="text-3xl font-black text-white mb-8 border-b border-white/10 pb-4">What&apos;s Included</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {event.highlights.map((highlight, i) => (
                     <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
@@ -357,7 +358,7 @@ export default function EventDetailPage() {
               ) : showWaitlistForm ? (
                 <div className="space-y-6">
                    <h3 className="text-2xl font-black text-white">Join Waitlist</h3>
-                   <p className="text-slate-400 text-sm leading-relaxed">This event is popular! Join the waitlist and we'll notify you as soon as a spot becomes available.</p>
+                   <p className="text-slate-400 text-sm leading-relaxed">This event is popular! Join the waitlist and we&apos;ll notify you as soon as a spot becomes available.</p>
                    
                    {bookingError && (
                       <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-medium">
