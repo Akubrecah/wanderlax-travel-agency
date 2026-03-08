@@ -13,10 +13,14 @@ export default function TicketsDashboardPage() {
   useEffect(() => {
     async function loadEvents() {
       try {
-        const data = await getAdminEvents();
-        setEvents(data);
-        if (data.length > 0) {
-          setSelectedEventId(data[0].id);
+        const result = await getAdminEvents();
+        if (result.success && result.events) {
+          setEvents(result.events);
+          if (result.events.length > 0) {
+            setSelectedEventId(result.events[0].id);
+          }
+        } else {
+          console.error('Failed to load admin events:', result.error);
         }
       } catch (err) {
         console.error('Failed to load events:', err);

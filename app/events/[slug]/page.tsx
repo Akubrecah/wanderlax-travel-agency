@@ -87,15 +87,18 @@ export default function EventDetailPage() {
   useEffect(() => {
     async function fetchEvent() {
       try {
-        const data = await getEventBySlug(slug);
-        if (data) {
-          setEvent(data as any);
-          if (data.ticketTypes.length > 0) {
-            setSelectedTicketType(data.ticketTypes[0].id);
+        const result = await getEventBySlug(slug);
+        if (result && result.success && result.event) {
+          const eventData = result.event;
+          setEvent(eventData as any);
+          if (eventData.ticketTypes && eventData.ticketTypes.length > 0) {
+            setSelectedTicketType(eventData.ticketTypes[0].id);
           }
-          if (data.seatingZones && data.seatingZones.length > 0) {
-            setSelectedSeating(data.seatingZones[0].id);
+          if (eventData.seatingZones && eventData.seatingZones.length > 0) {
+            setSelectedSeating(eventData.seatingZones[0].id);
           }
+        } else {
+          console.error('Failed to load event:', result?.error);
         }
       } catch (err) {
         console.error('Failed to load event:', err);

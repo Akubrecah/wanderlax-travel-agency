@@ -109,3 +109,73 @@ export async function markTicketUsed(id: string) {
     return { success: false, error: "Failed to mark ticket used" };
   }
 }
+
+export async function createEventBooking(data: {
+  userId: string;
+  eventId: string;
+  ticketCount: number;
+  totalAmount: number;
+  attendees: { name: string; email: string }[];
+}) {
+  try {
+    let user = await prisma.user.findUnique({
+      where: { clerkId: data.userId },
+    });
+
+    if (!user) {
+      user = await prisma.user.findUnique({ where: { id: data.userId }});
+      if (!user) return { success: false, error: "User not found" };
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: data.eventId },
+      include: { ticketTypes: true }
+    });
+
+    if (!event || event.ticketTypes.length === 0) {
+      return { success: false, error: "Event or ticket types not found" };
+    }
+
+    const ticketTypeId = event.ticketTypes[0].id;
+    const pricePerTicket = data.totalAmount / data.ticketCount;
+
+    const booking = await prisma.$transaction(async (tx: any) => {
+      const book = await tx.booking.create({
+        data: {
+          bookingRef: `EVT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+          userId: user!.id,
+          serviceType: "EVENT",
+          status: "CONFIRMED",
+          totalAmount: data.totalAmount,
+          finalAmount: data.totalAmount,
+          eventId: data.eventId,
+          ticketQuantity: data.ticketCount,
+        },
+      });
+
+      for (const attendee of data.attendees) {
+        if (!attendee.name || !attendee.email) continue;
+        await tx.ticket.create({
+          data: {
+            eventId: data.eventId,
+            userId: user!.id,
+            ticketTypeId: ticketTypeId,
+            attendeeName: attendee.name,
+            attendeeEmail: attendee.email,
+            pricePaid: pricePerTicket,
+            status: "ISSUED",
+            bookingId: book.id,
+          },
+        });
+      }
+
+      return book;
+    });
+
+    revalidatePath("/portal/tickets");
+    return { success: true, booking };
+  } catch (error) {
+    console.error("Error creating event booking:", error);
+    return { success: false, error: "Failed to create booking" };
+  }
+}

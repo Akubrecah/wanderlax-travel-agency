@@ -595,6 +595,21 @@ export async function createTicketBooking(data: {
 
 // ============ WAITLIST ============
 
+export async function getEventWaitlist(eventId: string) {
+  try {
+    const waitlist = await prisma.eventWaitlist.findMany({
+      where: { eventId },
+      include: {
+        user: true,
+      },
+      orderBy: { position: "asc" },
+    });
+    return serializePrisma(waitlist);
+  } catch (error) {
+    console.error("Error fetching waitlist:", error);
+    return [];
+  }
+}
 export async function addToWaitlist(data: {
   eventId: string;
   userId: string;

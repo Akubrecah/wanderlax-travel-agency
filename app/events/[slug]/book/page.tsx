@@ -86,7 +86,7 @@ export default function EventBookingPage({ params }: { params: { slug: string } 
     if (result.success) {
       router.push('/portal/tickets?success=true');
     } else {
-      setError('error' in result ? result.error : 'Failed to complete booking. Please try again.');
+      setError('error' in result ? (result.error as string) || 'An unknown error occurred' : 'Failed to complete booking. Please try again.');
       setIsSubmitting(false);
     }
   };
