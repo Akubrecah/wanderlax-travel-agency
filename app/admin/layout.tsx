@@ -54,8 +54,10 @@ export default async function AdminLayout({
 
   const role = dbUser?.role || (isAdminEmail ? 'ADMIN' : 'CUSTOMER');
 
-  // If user is not an admin, redirect to the customer dashboard
-  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+  // ADMIN and SUPER_ADMIN have full access.
+  // CONSULTANT also gets access as a staff member view.
+  const allowedRoles = ['ADMIN', 'SUPER_ADMIN', 'CONSULTANT'];
+  if (!allowedRoles.includes(role)) {
     redirect('/portal/dashboard');
   }
 

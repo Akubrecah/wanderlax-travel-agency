@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
-import { toggleStaffStatus, deleteStaff, createStaff } from '@/app/actions/staffActions';
+import { toggleStaffStatus, deleteStaff, createStaff, updateStaffRole } from '@/app/actions/staffActions';
 
 interface StaffMember {
   id: string;
@@ -79,18 +79,18 @@ export default function AdminStaffClient() {
     return filtered.slice(start, start + itemsPerPage);
   }, [filtered, currentPage]);
 
-  /* 
   const handleRoleChange = async (id: string, role: string) => {
     const prev = staff.find(s => s.id === id);
     if (!prev) return;
+    // Optimistic update
     setStaff(st => st.map(s => s.id === id ? { ...s, role } : s));
     const res = await updateStaffRole(id, role);
     if (!res.success) {
+      // Revert on failure
       setStaff(st => st.map(s => s.id === id ? prev : s));
-      alert('Failed to update role');
+      alert('Failed to update role: ' + (res.error || 'Unknown error'));
     }
   };
-  */
 
   const handleToggleStatus = async (id: string, isActive: boolean) => {
     const prev = staff.find(s => s.id === id);
@@ -278,15 +278,24 @@ export default function AdminStaffClient() {
                         </div>
                       </td>
                       <td className="py-4 px-6">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${
-                          s.role === 'ADMIN' || s.role === 'SUPER_ADMIN' 
-                            ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' 
-                            : s.role === 'CONSULTANT' 
-                              ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' 
-                              : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                        }`}>
-                          {s.role}
-                        </span>
+                        <select
+                          value={s.role}
+                          onChange={e => handleRoleChange(s.id, e.target.value)}
+                          className={`text-xs font-medium px-2.5 py-1.5 rounded-md border cursor-pointer outline-none transition-all ${
+                            s.role === 'SUPER_ADMIN'
+                              ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                              : s.role === 'ADMIN'
+                              ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                              : s.role === 'CONSULTANT'
+                              ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                              : 'bg-slate-500/10 text-slate-400 border-slate-500/20'
+                          }`}
+                        >
+                          <option value="CUSTOMER">Staff Member</option>
+                          <option value="CONSULTANT">Consultant</option>
+                          <option value="ADMIN">Admin</option>
+                          <option value="SUPER_ADMIN">Super Admin</option>
+                        </select>
                       </td>
                       <td className="py-4 px-6">
                         <button 

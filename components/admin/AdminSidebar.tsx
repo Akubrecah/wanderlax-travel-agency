@@ -120,7 +120,9 @@ export function AdminSidebar() {
           <div className="bg-center bg-no-repeat bg-cover rounded-full size-8" data-alt="User Avatar Profile" style={{ backgroundImage: `url('${user?.imageUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA-IBtcNloCVv54a1j2HpwGpjo2wGjfX2gOihiZLlnhLqVsOvBlMASFZ0laWjaPmD9n0CEb_cMJCeW9SVs4-g7mTjYrireW7qoW9U820REumIp6RiZlqnzLi8P6Xg-M6RkHhD3qcADu_9R6fi7jGAMdsu8EXoKTViRIfLASpzS3x3bvXGlrup4ioKFxxP540_LmF5K5o8hq-MkkxFXvj2fgeDQt1kTATsSF2LY2MkB21U9DBUE3N3MWUGneYtxycRhnPC4P8020Bw'}')` }}></div>
           <div className="flex flex-col overflow-hidden">
             <span className="text-sm font-medium text-white truncate">{user?.fullName || 'Admin User'}</span>
-            <span className="text-xs text-slate-400 truncate">Admin</span>
+            <span className="text-xs text-slate-400 truncate capitalize">
+              {user?.publicMetadata?.role as string || 'Admin'}
+            </span>
           </div>
         </div>
       </div>
