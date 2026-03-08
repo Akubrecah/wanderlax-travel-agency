@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { createTourBooking, createHotelBooking, createCarHireBooking } from '@/app/actions/bookingActions';
+import { createTourBooking, createHotelBooking, createCarHireBooking, getBookingByRef, confirmBookingByRef } from '@/app/actions/bookingActions';
 import { getHotelBySlug, getRoomById } from '@/app/actions/hotelActions';
 import { getCarById } from '@/app/actions/carActions';
 
@@ -78,6 +78,7 @@ function BookingFormContent() {
   const hotelSlug = searchParams.get('hotel') || '';
   const roomId = searchParams.get('room') || '';
   const carId = searchParams.get('carId') || '';
+  const bookingRef = searchParams.get('bookingRef') || '';
   
   const tour = tourData[tourName];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,48 +87,63 @@ function BookingFormContent() {
   const [room, setRoom] = useState<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [car, setCar] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [existingBooking, setExistingBooking] = useState<any>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropoffLocation, setDropoffLocation] = useState('');
 
   React.useEffect(() => {
     async function fetchData() {
-      if (hotelSlug && roomId) {
+      if (bookingRef) {
         setIsLoadingData(true);
         try {
-          const [hotelData, roomData] = await Promise.all([
-            getHotelBySlug(hotelSlug),
-            getRoomById(roomId)
-          ]);
-          setHotel(hotelData);
-          setRoom(roomData);
+          const res = await getBookingByRef(bookingRef);
+          if (res.success) {
+             setExistingBooking(res.booking);
+          }
         } catch (err) {
-          console.error("Error fetching booking data:", err);
+          console.error("Error fetching existing booking:", err);
         } finally {
           setIsLoadingData(false);
         }
-      }
-      if (carId) {
-        setIsLoadingData(true);
-        try {
-          const carData = await getCarById(carId);
-          setCar(carData);
-        } catch (err) {
-          console.error("Error fetching car data:", err);
-        } finally {
-          setIsLoadingData(false);
+      } else {
+        if (hotelSlug && roomId) {
+          setIsLoadingData(true);
+          try {
+            const [hotelData, roomData] = await Promise.all([
+              getHotelBySlug(hotelSlug),
+              getRoomById(roomId)
+            ]);
+            setHotel(hotelData);
+            setRoom(roomData);
+          } catch (err) {
+            console.error("Error fetching hotel data:", err);
+          } finally {
+            setIsLoadingData(false);
+          }
+        }
+        if (carId) {
+          setIsLoadingData(true);
+          try {
+            const carData = await getCarById(carId);
+            setCar(carData);
+          } catch (err) {
+            console.error("Error fetching car data:", err);
+          } finally {
+            setIsLoadingData(false);
+          }
         }
       }
     }
     fetchData();
-  }, [hotelSlug, roomId, carId]);
+  }, [hotelSlug, roomId, carId, bookingRef]);
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [guests, setGuests] = useState(2);
   const [specialRequirements, setSpecialRequirements] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  // router removed as it was unused
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -148,7 +164,9 @@ function BookingFormContent() {
 
     try {
       let result;
-      if (carId && car) {
+      if (existingBooking) {
+        result = await confirmBookingByRef(existingBooking.bookingRef);
+      } else if (carId && car) {
         result = await createCarHireBooking({
           carId,
           pickupLocation,
@@ -219,20 +237,20 @@ function BookingFormContent() {
             </div>
             <h2 className="text-3xl font-bold text-white">Booking Request Submitted!</h2>
             <p className="text-slate-400 text-lg">
-              Thank you, {user?.firstName || 'Traveler'}! Your booking request for <span className="text-white font-semibold">{car ? `${car.make} ${car.model}` : (hotel ? hotel.name : tourName)}</span> has been received. Our team will reach out within 24 hours to confirm your reservation.
+              Thank you, {user?.firstName || 'Traveler'}! Your booking request for <span className="text-white font-semibold">{existingBooking?.eventBooking?.event?.title || (car ? `${car.make} ${car.model}` : (hotel ? hotel.name : tourName))}</span> has been received. Our team will reach out within 24 hours to confirm your reservation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
-                href="/portal/dashboard"
+                href={existingBooking?.serviceType === "EVENT" ? "/portal/tickets" : "/portal/dashboard"}
                 className="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-all shadow-lg shadow-primary/20"
               >
-                Go to Dashboard
+                Go to {existingBooking?.serviceType === "EVENT" ? "Tickets" : "Dashboard"}
               </Link>
               <Link
-                href={car ? "/car-hire" : (hotel ? "/hotels" : "/tours")}
+                href={existingBooking?.serviceType === "EVENT" ? "/events" : (car ? "/car-hire" : (hotel ? "/hotels" : "/tours"))}
                 className="bg-white/10 border border-white/20 text-white font-bold py-3 px-8 rounded-lg hover:bg-white/20 transition-all"
               >
-                {car ? 'Browse More Cars' : (hotel ? 'Browse More Hotels' : 'Browse More Tours')}
+                Browse More
               </Link>
             </div>
           </div>
@@ -251,9 +269,9 @@ function BookingFormContent() {
           <div className="flex items-center gap-2 text-sm text-slate-400 mb-8">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <Link href={car ? "/car-hire" : (hotel ? "/hotels" : "/tours")} className="hover:text-white transition-colors">{car ? "Car Hire" : (hotel ? "Hotels" : "Tours")}</Link>
+            <Link href={existingBooking ? (existingBooking.serviceType === "EVENT" ? "/events" : "/tours") : (car ? "/car-hire" : (hotel ? "/hotels" : "/tours"))} className="hover:text-white transition-colors">{existingBooking ? existingBooking.serviceType : (car ? "Car Hire" : (hotel ? "Hotels" : "Tours"))}</Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="text-white font-medium">{car ? `${car.make} ${car.model}` : (hotel ? hotel.name : (tourName || 'Book'))}</span>
+            <span className="text-white font-medium">{existingBooking?.eventBooking?.event?.title || (car ? `${car.make} ${car.model}` : (hotel ? hotel.name : (tourName || 'Checkout')))}</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -307,93 +325,112 @@ function BookingFormContent() {
                 </div>
               </section>
 
-              {/* Trip Details */}
+              {/* Trip or Payment Details */}
               <form onSubmit={handleSubmit}>
                 <section className="flex flex-col gap-6">
-                  <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
-                    <span className="material-symbols-outlined text-primary">{car ? 'directions_car' : 'calendar_month'}</span>
-                    <h2 className="text-xl font-bold text-white">{car ? 'Rental Details' : 'Trip Details'}</h2>
-                  </div>
-                  {car && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Pickup Location</label>
-                        <input
-                          type="text"
-                          required
-                          value={pickupLocation}
-                          onChange={(e) => setPickupLocation(e.target.value)}
-                          placeholder="e.g. Airport Terminal 1"
-                          className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all"
-                        />
+                  {existingBooking ? (
+                    <>
+                      <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
+                        <span className="material-symbols-outlined text-primary">payments</span>
+                        <h2 className="text-xl font-bold text-white">Payment Details</h2>
+                      </div>
+                      <div className="bg-background-dark p-6 border border-slate-700 rounded-xl space-y-4">
+                        <p className="text-slate-400">You are about to securely pay for and confirm your booking reservation.</p>
+                        <div className="flex justify-between items-center text-lg font-bold border-t border-slate-700 pt-4 mt-6">
+                          <span className="text-white">Total Amount</span>
+                          <span className="text-green-500 font-extrabold text-2xl">${Number(existingBooking.finalAmount).toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
+                        <span className="material-symbols-outlined text-primary">{car ? 'directions_car' : 'calendar_month'}</span>
+                        <h2 className="text-xl font-bold text-white">{car ? 'Rental Details' : 'Trip Details'}</h2>
+                      </div>
+                      {car && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Pickup Location</label>
+                            <input
+                              type="text"
+                              required
+                              value={pickupLocation}
+                              onChange={(e) => setPickupLocation(e.target.value)}
+                              placeholder="e.g. Airport Terminal 1"
+                              className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Drop-off Location</label>
+                            <input
+                              type="text"
+                              required
+                              value={dropoffLocation}
+                              onChange={(e) => setDropoffLocation(e.target.value)}
+                              placeholder="e.g. City Center Office"
+                              className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="space-y-2">
+                          <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Pickup Date' : 'Start Date'}</label>
+                          <input
+                            type={car ? 'datetime-local' : 'date'}
+                            required
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white transition-all [color-scheme:dark]"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Return Date' : 'End Date'}</label>
+                          <input
+                            type={car ? 'datetime-local' : 'date'}
+                            required
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white transition-all [color-scheme:dark]"
+                          />
+                        </div>
+                        {!car && (
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Number of Guests</label>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                onClick={() => setGuests(Math.max(1, guests - 1))}
+                                className="size-10 rounded-lg bg-surface-dark border border-slate-700 text-white flex items-center justify-center hover:bg-primary hover:border-primary transition-colors font-bold"
+                              >
+                                −
+                              </button>
+                              <span className="text-white font-semibold text-lg w-16 text-center">{guests} {guests === 1 ? 'Guest' : 'Guests'}</span>
+                              <button
+                                type="button"
+                                onClick={() => setGuests(Math.min(20, guests + 1))}
+                                className="size-10 rounded-lg bg-surface-dark border border-slate-700 text-white flex items-center justify-center hover:bg-primary hover:border-primary transition-colors font-bold"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Drop-off Location</label>
-                        <input
-                          type="text"
-                          required
-                          value={dropoffLocation}
-                          onChange={(e) => setDropoffLocation(e.target.value)}
-                          placeholder="e.g. City Center Office"
-                          className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all"
+                        <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Additional Notes' : 'Special Requirements'}</label>
+                        <textarea
+                          value={specialRequirements}
+                          onChange={(e) => setSpecialRequirements(e.target.value)}
+                          placeholder={car ? 'Any special requests, child seat, GPS, etc...' : 'Any dietary restrictions, accessibility needs, or special requests...'}
+                          rows={4}
+                          className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all resize-none"
                         />
                       </div>
-                    </div>
+                    </>
                   )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Pickup Date' : 'Start Date'}</label>
-                      <input
-                        type={car ? 'datetime-local' : 'date'}
-                        required
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white transition-all [color-scheme:dark]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Return Date' : 'End Date'}</label>
-                      <input
-                        type={car ? 'datetime-local' : 'date'}
-                        required
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white transition-all [color-scheme:dark]"
-                      />
-                    </div>
-                    {!car && (
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">Number of Guests</label>
-                      <div className="flex items-center gap-4">
-                        <button
-                          type="button"
-                          onClick={() => setGuests(Math.max(1, guests - 1))}
-                          className="size-10 rounded-lg bg-surface-dark border border-slate-700 text-white flex items-center justify-center hover:bg-primary hover:border-primary transition-colors font-bold"
-                        >
-                          −
-                        </button>
-                        <span className="text-white font-semibold text-lg w-16 text-center">{guests} {guests === 1 ? 'Guest' : 'Guests'}</span>
-                        <button
-                          type="button"
-                          onClick={() => setGuests(Math.min(20, guests + 1))}
-                          className="size-10 rounded-lg bg-surface-dark border border-slate-700 text-white flex items-center justify-center hover:bg-primary hover:border-primary transition-colors font-bold"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold uppercase tracking-wider text-slate-400">{car ? 'Additional Notes' : 'Special Requirements'}</label>
-                    <textarea
-                      value={specialRequirements}
-                      onChange={(e) => setSpecialRequirements(e.target.value)}
-                      placeholder={car ? 'Any special requests, child seat, GPS, etc...' : 'Any dietary restrictions, accessibility needs, or special requests...'}
-                      rows={4}
-                      className="w-full bg-background-dark border border-slate-700 focus:border-primary focus:ring-primary rounded-lg py-3 px-4 text-white placeholder:text-slate-600 transition-all resize-none"
-                    />
-                  </div>
+
                   {error && (
                     <div className="bg-red-500/10 border border-red-500/30 text-red-500 p-4 rounded-xl text-sm">
                       {error}
@@ -401,29 +438,29 @@ function BookingFormContent() {
                   )}
                   <button
                     type="submit"
-                    disabled={isSubmitting || (!tour && !hotel && !car)}
+                    disabled={isSubmitting || (!existingBooking && !tour && !hotel && !car)}
                     className="w-full bg-primary hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-4 rounded-xl shadow-[0_0_20px_rgba(195,9,9,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-lg mt-4"
                   >
                     {isSubmitting ? (
                       <div className="animate-spin size-5 border-2 border-white border-t-transparent rounded-full"></div>
                     ) : (
-                      <span className="material-symbols-outlined">bookmark_check</span>
+                      <span className="material-symbols-outlined">{existingBooking ? 'payments' : 'bookmark_check'}</span>
                     )}
-                    {isSubmitting ? 'Confirming...' : 'Confirm Booking Request'}
+                    {isSubmitting ? 'Processing...' : (existingBooking ? 'Confirm & Secure Payment' : 'Confirm Booking Request')}
                   </button>
                 </section>
               </form>
             </div>
 
-            {/* Right Column: Tour Summary */}
+          {/* Right Column: Tour Summary */}
             <aside className="lg:col-span-4">
               <div className="sticky top-24 flex flex-col gap-6">
                 <div className="bg-background-dark border border-primary/20 rounded-2xl overflow-hidden shadow-xl">
                   {/* Summary Image */}
-                  {(tour || hotel || car) && (
+                  {(existingBooking || tour || hotel || car) && (
                     <div
                       className="h-48 bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${car ? (car.images?.[0] || 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=800&q=80') : (hotel ? (room?.images[0] || hotel.images[0]) : tour?.image)}')` }}
+                      style={{ backgroundImage: `url('${existingBooking?.eventBooking?.event?.imageUrl || (car ? (car.images?.[0] || 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=800&q=80') : (hotel ? (room?.images[0] || hotel.images[0]) : tour?.image))}')` }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
                     </div>
@@ -431,7 +468,7 @@ function BookingFormContent() {
                   <div className="p-6 relative">
                     <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
                     <h3 className="text-lg font-bold text-white mb-1">
-                      {car ? `${car.make} ${car.model}` : (hotel ? `${hotel.name} - ${room?.name}` : (tourName || 'Custom Tour'))}
+                      {existingBooking?.eventBooking?.event?.title || (car ? `${car.make} ${car.model}` : (hotel ? `${hotel.name} - ${room?.name}` : (tourName || 'Custom Tour')))}
                     </h3>
                     {hotel && (
                       <>
@@ -512,7 +549,36 @@ function BookingFormContent() {
                         </div>
                       </>
                     )}
-                    {!tour && !hotel && !car && (
+                    {existingBooking && (
+                      <>
+                        <p className="text-slate-400 text-sm mb-6 uppercase tracking-wider font-bold text-primary">
+                          {existingBooking.serviceType.replace('_', ' ')}
+                        </p>
+                        <div className="space-y-3 py-4 border-t border-b border-slate-800">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-400 flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[16px]">confirmation_number</span> Booking Ref
+                            </span>
+                            <span className="text-white font-mono bg-slate-800 px-2 py-0.5 rounded text-xs">{existingBooking.bookingRef}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-400 flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[16px]">info</span> Status
+                            </span>
+                            <span className="text-white font-semibold">{existingBooking.status}</span>
+                          </div>
+                          <div className="flex justify-between text-sm border-t border-slate-800 pt-3 mt-1">
+                            <span className="text-slate-400 flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[16px]">payments</span> Payment Status
+                            </span>
+                            <span className={`${existingBooking.paymentStatus === 'PAID' ? 'text-green-500' : 'text-amber-500'} font-bold`}>
+                              {existingBooking.paymentStatus}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {!existingBooking && !tour && !hotel && !car && (
                       <p className="text-slate-400 text-sm mt-2">
                         No matching item found. Please <Link href="/hotels" className="text-primary hover:underline">browse hotels</Link>, <Link href="/tours" className="text-primary hover:underline">tours</Link>, or <Link href="/car-hire" className="text-primary hover:underline">car hire</Link> and select one to book.
                       </p>

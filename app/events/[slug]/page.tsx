@@ -149,7 +149,7 @@ export default function EventDetailPage() {
       if (result.success) {
         setBookingSuccess(true);
         setTimeout(() => {
-          router.push(`/portal/book?bookingRef=${result.booking?.bookingRef}`);
+          router.push(`/events/${slug}/book`);
         }, 2000);
       } else {
         setBookingError(result.error || 'Failed to book tickets');

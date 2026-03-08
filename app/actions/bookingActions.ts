@@ -85,6 +85,53 @@ export async function deleteBooking(id: string) {
   }
 }
 
+export async function getBookingByRef(bookingRef: string) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { bookingRef },
+      include: {
+        tourBooking: { include: { tourPackage: true } },
+        hotelBooking: { include: { hotel: true, room: true } },
+        carHireBooking: { include: { car: true } }
+      }
+    });
+    
+    if (!booking) return { success: false, error: "Booking not found" };
+    
+    // Manually fetch and attach Event since there is no defined relation
+    const bookingData: any = { ...booking };
+    if (booking.serviceType === "EVENT" && booking.eventId) {
+      const event = await prisma.event.findUnique({
+        where: { id: booking.eventId }
+      });
+      if (event) {
+        bookingData.eventBooking = { event };
+      }
+    }
+
+    return { success: true, booking: JSON.parse(JSON.stringify(bookingData)) };
+  } catch (error) {
+    console.error("Error fetching booking by ref:", error);
+    return { success: false, error: "Failed to fetch booking" };
+  }
+}
+
+export async function confirmBookingByRef(bookingRef: string) {
+  try {
+    const updated = await prisma.booking.update({
+      where: { bookingRef },
+      data: { status: "CONFIRMED", paymentStatus: "PAID" }
+    });
+    
+    revalidatePath("/portal/dashboard");
+    revalidatePath("/portal/tickets");
+    return { success: true, booking: JSON.parse(JSON.stringify(updated)) };
+  } catch (error) {
+    console.error("Error confirming booking by ref:", error);
+    return { success: false, error: "Failed to confirm booking" };
+  }
+}
+
 export async function createManualBooking(data: {
   email: string;
   firstName: string;

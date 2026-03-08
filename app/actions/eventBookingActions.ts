@@ -117,15 +117,24 @@ export async function createEventBooking(data: {
   totalAmount: number;
   attendees: { name: string; email: string }[];
 }) {
+  console.log('--- STARTING EVENT BOOKING ---');
+  console.log('Received Data:', JSON.stringify(data, null, 2));
+
   try {
     let user = await prisma.user.findUnique({
       where: { clerkId: data.userId },
     });
 
     if (!user) {
+      console.log('Did not find user by clerkId, trying by db id...');
       user = await prisma.user.findUnique({ where: { id: data.userId }});
-      if (!user) return { success: false, error: "User not found" };
+      if (!user) {
+        console.error('User not found by id either.');
+        return { success: false, error: "User not found" };
+      }
     }
+
+    console.log('User OK:', user.id);
 
     const event = await prisma.event.findUnique({
       where: { id: data.eventId },
@@ -133,13 +142,19 @@ export async function createEventBooking(data: {
     });
 
     if (!event || event.ticketTypes.length === 0) {
+      console.error('Event or ticket types not found.');
       return { success: false, error: "Event or ticket types not found" };
     }
+
+    console.log('Event OK, TicketType Count:', event.ticketTypes.length);
 
     const ticketTypeId = event.ticketTypes[0].id;
     const pricePerTicket = data.totalAmount / data.ticketCount;
 
+    console.log('Starting transaction...');
+
     const booking = await prisma.$transaction(async (tx: any) => {
+      console.log('Creating booking record at amount:', data.totalAmount);
       const book = await tx.booking.create({
         data: {
           bookingRef: `EVT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
@@ -153,6 +168,7 @@ export async function createEventBooking(data: {
         },
       });
 
+      console.log('Creating tickets...', data.attendees.length);
       for (const attendee of data.attendees) {
         if (!attendee.name || !attendee.email) continue;
         await tx.ticket.create({
@@ -164,18 +180,19 @@ export async function createEventBooking(data: {
             attendeeEmail: attendee.email,
             pricePaid: pricePerTicket,
             status: "ISSUED",
-            bookingId: book.id,
           },
         });
       }
 
+      console.log('Tickets created successfully.');
       return book;
     });
 
+    console.log('Transaction succeeded, revalidating path...');
     revalidatePath("/portal/tickets");
-    return { success: true, booking };
+    return { success: true, booking: JSON.parse(JSON.stringify(booking)) };
   } catch (error) {
     console.error("Error creating event booking:", error);
-    return { success: false, error: "Failed to create booking" };
+    return { success: false, error: "Failed to create booking", detailedError: String(error) };
   }
 }

@@ -346,6 +346,11 @@ export async function getEventBySlug(slug: string) {
     const ticketsSold = event.tickets.filter((t: any) => t.status !== "CANCELLED" as any).length;
     const capacityRemaining = (event as any).totalCapacity - ticketsSold;
 
+    const prices = (event as any).ticketTypes.map((t: any) => {
+      const isEarlyBird = t.earlyBirdPrice && t.earlyBirdEndDate && new Date() < new Date(t.earlyBirdEndDate);
+      return isEarlyBird ? Number(t.earlyBirdPrice) : Number(t.basePrice);
+    });
+    
     const formattedEvent = {
       ...event,
       ticketTypes: (event as any).ticketTypes.map((t: any) => ({
@@ -362,6 +367,8 @@ export async function getEventBySlug(slug: string) {
       ticketsSold,
       capacityRemaining,
       isSoldOut: capacityRemaining <= 0,
+      basePrice: prices.length > 0 ? Math.min(...prices) : 0,
+      price: prices.length > 0 ? Math.min(...prices) : 0,
     };
 
     return { success: true, event: serializePrisma(formattedEvent) };
@@ -577,7 +584,6 @@ export async function createTicketBooking(data: {
           attendeeEmail: data.attendeeEmail,
           pricePaid: new Decimal(finalPrice),
           status: "ISSUED" as any,
-          bookingId: book.id, // Link ticket to booking
         } as any,
       });
 
@@ -586,7 +592,7 @@ export async function createTicketBooking(data: {
 
     revalidatePath("/portal/tickets");
     
-    return { success: true, booking: booking.book };
+    return { success: true, booking: JSON.parse(JSON.stringify(booking.book)) };
   } catch (error) {
     console.error("Error creating ticket booking:", error);
     return { success: false, error: String(error) };
