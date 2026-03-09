@@ -146,8 +146,8 @@ export default function Header() {
             <span className="material-symbols-outlined text-2xl font-light">diamond</span>
           </div>
           <div className="flex flex-col text-left">
-            <h2 className="text-white text-xl font-bold tracking-tight leading-none">Wanderlux</h2>
-            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Bespoke Travel</span>
+            <h2 className="text-white text-xl font-bold tracking-tight leading-none">Twende Africa Tours</h2>
+            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
           </div>
         </Link>
 

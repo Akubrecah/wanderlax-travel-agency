@@ -36,7 +36,7 @@ export function AdminSidebar() {
           <div className="flex items-center gap-3">
             <div className="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-primary/50" data-alt="Company Logo Abstract" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDxItnaRqAa0g0uhxpuiOdb5rjaRHwYCL0n7dcgj6gpBxbVgzVSpOmVpNDtlkLqEm6Ze2lhMUbFi2PsMFtMdhjHvUW_zqdcsNNAYgdvNCAWPx37jaVg5l-X5JXTcHfj1vcStnvVtqx8d5SjGu0XUlkjaqPEyozRkQfyAY8G8g8Pe-ML_RLvR-ZGxXZPqtBhApMJd6cuGxcuLGsk7ywOLEOUtj_0wy8V0aGHeasXxMKgasV-t32xtgl9phTGColXAYURYBQrnR-sNg')" }}></div>
             <div className="flex flex-col">
-              <h1 className="text-white text-lg font-bold tracking-tight">Wanderlux</h1>
+              <h1 className="text-white text-lg font-bold tracking-tight">Twende Africa Tours</h1>
               <p className="text-primary text-xs font-semibold uppercase tracking-wider">Admin Panel</p>
             </div>
           </div>

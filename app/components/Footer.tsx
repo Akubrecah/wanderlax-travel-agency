@@ -22,8 +22,8 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-2xl">diamond</span>
               </div>
               <div className="flex flex-col">
-                <h2 className="text-white text-xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors">Wanderlux</h2>
-                <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Bespoke Travel</span>
+                <h2 className="text-white text-xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors">Twende Africa Tours</h2>
+                <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
               </div>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
@@ -88,7 +88,7 @@ export default function Footer() {
         
         <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-slate-500 text-xs tracking-wide">
-            &copy; 2026 Wanderlux Bespoke Travel. All Rights Reserved. Protected by Global Concierge Standards.
+            &copy; 2026 Twende Africa Tours. All Rights Reserved.
           </p>
           <div className="flex gap-8">
             <Link className="text-slate-500 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors" href="/privacy">Privacy</Link>

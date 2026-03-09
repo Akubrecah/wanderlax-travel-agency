@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import SocialChatWidget from "./components/SocialChatWidget";
 
 export const metadata: Metadata = {
-  title: "Wanderlux | Luxury Travel Agency",
+  title: "Twende Africa Tours | Explore Africa and the World",
   description: "Curated journeys for the discerning traveler. Experience private jets, secluded islands, and unforgettable luxury destinations worldwide.",
 };
 
