@@ -17,7 +17,7 @@ export default function AmalfiCoastItinerary() {
         {/* Header Section */}
         <header className="pt-12 px-8 md:px-16 flex flex-col md:flex-row justify-between items-end gap-6">
           <div className="flex flex-col gap-2">
-            <span className="text-primary font-black text-4xl tracking-tighter uppercase">Wanderlux</span>
+            <span className="text-primary font-black text-4xl tracking-tighter uppercase">Twende Africa Tours</span>
             <span className="text-slate-500 text-sm tracking-[0.2em] uppercase font-medium">Luxury Travel Reimagined</span>
           </div>
           <div className="text-right">
@@ -135,7 +135,7 @@ export default function AmalfiCoastItinerary() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="material-symbols-outlined text-primary text-xl">check_circle</span>
-                  <span className="text-slate-700 text-sm">Full-time Wanderlux concierge &amp; expert local guides</span>
+                  <span className="text-slate-700 text-sm">Full-time Twende Africa Tours concierge &amp; expert local guides</span>
                 </li>
               </ul>
               <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-6 mt-10">Exclusions</h4>
@@ -179,14 +179,14 @@ export default function AmalfiCoastItinerary() {
         <footer className="bg-slate-900 text-white p-12 mt-12 print-break">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col gap-1 items-center md:items-start">
-              <span className="text-2xl font-black uppercase tracking-tighter">Wanderlux</span>
+              <span className="text-2xl font-black uppercase tracking-tighter">Twende Africa Tours</span>
               <span className="text-slate-400 text-[10px] uppercase tracking-widest">Global Luxury Concierge</span>
             </div>
             
             <div className="flex flex-col md:flex-row gap-8 text-center md:text-left">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Connect</span>
-                <span className="text-sm text-slate-300">itineraries@wanderlux.com</span>
+                <span className="text-sm text-slate-300">info@twendeafricatours.com</span>
                 <span className="text-sm text-slate-300">+1 (888) LUX-TRIP</span>
               </div>
               <div className="flex flex-col">
@@ -204,7 +204,7 @@ export default function AmalfiCoastItinerary() {
           </div>
           
           <div className="mt-12 pt-8 border-t border-slate-800 text-center">
-            <p className="text-[10px] text-slate-500 uppercase tracking-[0.3em]">&copy; 2024 Wanderlux Private Travel. All rights reserved.</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-[0.3em]">&copy; 2024 Twende Africa Tours. All rights reserved.</p>
           </div>
         </footer>
 

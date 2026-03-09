@@ -383,7 +383,7 @@ export default function AdminStaffClient() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
-                  <input required name="email" type="email" placeholder="john@wanderlux.com" className="w-full bg-slate-50 dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl p-3 text-slate-900 dark:text-white text-sm focus:border-primary outline-none transition-all" />
+                  <input required name="email" type="email" placeholder="info@twendeafricatours.com" className="w-full bg-slate-50 dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl p-3 text-slate-900 dark:text-white text-sm focus:border-primary outline-none transition-all" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Assigned Role</label>

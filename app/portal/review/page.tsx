@@ -47,7 +47,7 @@ export default function ReviewPage() {
                                     <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"></path>
                                 </svg>
                             </div>
-                            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight uppercase">Wanderlux</h2>
+                            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight uppercase">Twende Africa Tours</h2>
                         </div>
                         <div className="flex gap-4">
                             <Link href="/portal/dashboard" className="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors">
@@ -164,7 +164,7 @@ export default function ReviewPage() {
                                         <span className="material-symbols-outlined text-primary">security</span>
                                     </div>
                                     <div className="text-left">
-                                        <p className="text-xs font-bold uppercase tracking-tight">Wanderlux Verified</p>
+                                        <p className="text-xs font-bold uppercase tracking-tight">Twende Verified</p>
                                         <p className="text-[10px] text-slate-500 uppercase">Secure submission process</p>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ export default function ReviewPage() {
                     </main>
                     <footer className="px-6 lg:px-20 py-10 border-t border-primary/10 text-center">
                         <p className="text-[10px] text-slate-600 font-mono uppercase tracking-[0.3em]">
-                            © 2024 Wanderlux Private Travel Co. • All Rights Reserved
+                            © 2024 Twende Africa Tours • All Rights Reserved
                         </p>
                     </footer>
                 </div>

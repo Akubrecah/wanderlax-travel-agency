@@ -325,7 +325,7 @@ export default function HotelsPage() {
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC3LboRjFRBURcDK81YS2v0nIq8kE4O6WyivnqM816-FjZ-s97NPdp8dah9YsazAcO07rSurdssBW7jYT2QlIQi6bwiQ-o7zsUxwW3X7nkYicZ7UBZ2xx2Tkklb62hCp1xzapDUFP9iB22Jkp4UpWUTwi38_zNpWBX0-zS1FX_EAWcnEqewSvnAmuGieRkgLu3IFAU4qHWcvlaniG3KsaGV0cZFiyqxHm7f785h3hu99hyIwUfNo02YzpR0wMxF9sF7lwNuEvHj9g')" }}></div>
                   </Link>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                  <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider shadow-lg">Wanderlux Choice</div>
+                  <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider shadow-lg">Editor&apos;s Choice</div>
                   <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full hover:bg-white/20 transition-colors">
                     <span className="material-symbols-outlined text-white">favorite</span>
                   </div>

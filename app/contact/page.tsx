@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-export default function ContactWanderluxGetInTouchPage() {
+export default function ContactTwende Africa ToursGetInTouchPage() {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -145,9 +145,9 @@ export default function ContactWanderluxGetInTouchPage() {
               </div>
               <div className="group">
                 <h3 className="text-sm font-sans font-bold uppercase tracking-wider text-text-muted mb-2 group-hover:text-primary transition-colors">Priority Support</h3>
-                <a className="text-xl text-white font-display font-medium hover:text-primary transition-colors flex items-center gap-3 break-all" href="mailto:concierge@wanderlux.com">
+                <a className="text-xl text-white font-display font-medium hover:text-primary transition-colors flex items-center gap-3 break-all" href="mailto:info@twendeafricatours.com">
                   <span className="material-symbols-outlined text-3xl font-light">mail</span>
-                  concierge@wanderlux.com
+                  info@twendeafricatours.com
                 </a>
                 <p className="text-sm text-text-muted mt-1 font-sans font-light">Response within 2 hours</p>
               </div>
@@ -161,7 +161,7 @@ export default function ContactWanderluxGetInTouchPage() {
                   <span className="material-symbols-outlined">location_on</span>
                 </div>
                 <div>
-                  <p className="text-lg text-white font-medium">Wanderlux Headquarters</p>
+                  <p className="text-lg text-white font-medium">Twende Africa Tours Headquarters</p>
                   <p className="text-text-muted font-sans font-light leading-relaxed mt-1">
                     45 Park Lane, Mayfair<br/>
                     London, W1K 1PN<br/>
@@ -192,7 +192,7 @@ export default function ContactWanderluxGetInTouchPage() {
             {/* Footer-like tiny text */}
             <div className="pt-8">
               <p className="text-xs text-text-muted/60 font-sans">
-                © 2025 Wanderlux Travel. All rights reserved. <br/>
+                © 2025 Twende Africa Tours. All rights reserved. <br/>
                 <Link className="hover:text-primary transition-colors" href="/privacy">Privacy Policy</Link> • <Link className="hover:text-primary transition-colors" href="/terms">Terms of Service</Link>
               </p>
             </div>

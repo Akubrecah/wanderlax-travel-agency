@@ -284,7 +284,7 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
                     value={settings.instagramUrl}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="https://ig.me/m/wanderlux"
+                    placeholder="https://ig.me/m/twendeafricatours"
                   />
                 </div>
                 
@@ -299,7 +299,7 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
                     value={settings.facebookUrl}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="https://m.me/wanderlux"
+                    placeholder="https://m.me/twendeafricatours"
                   />
                 </div>
                 
@@ -314,7 +314,7 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
                     value={settings.xUrl}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="https://twitter.com/messages/compose?recipient_id=wanderlux"
+                    placeholder="https://twitter.com/messages/compose?recipient_id=twendeafricatours"
                   />
                 </div>
                 
@@ -329,7 +329,7 @@ export function AdminSettingsClient({ initialSettings }: { initialSettings: Reco
                     value={settings.telegramUrl}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-border-dark bg-background-dark text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="https://t.me/wanderlux"
+                    placeholder="https://t.me/twendeafricatours"
                   />
                 </div>
               </div>

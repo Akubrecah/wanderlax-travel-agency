@@ -3,7 +3,7 @@ import React from 'react';
 import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
 
-export default function WanderluxLoginPage() {
+export default function TwendeLoginPage() {
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
       {/* Background Decoration */}
@@ -23,7 +23,7 @@ export default function WanderluxLoginPage() {
             <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 ring-1 ring-primary/40">
               <span className="material-symbols-outlined text-primary text-3xl">flight_takeoff</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-white">Wanderlux</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-white">Twende Africa Tours</h2>
             <p className="mt-2 text-sm text-slate-400">Sign in to manage your travel experiences</p>
           </div>
 
@@ -83,7 +83,7 @@ export default function WanderluxLoginPage() {
 
         {/* Footer Links */}
         <div className="mt-8 text-center text-xs text-slate-500">
-          <p>© 2025 Wanderlux Travel. Secure Access.</p>
+          <p>© 2025 Twende Africa Tours. Secure Access.</p>
           <div className="mt-2 flex justify-center space-x-4">
             <Link className="hover:text-primary transition-colors" href="/privacy">Privacy Policy</Link>
             <span className="text-slate-700">|</span>

@@ -212,7 +212,7 @@ function DeleteConfirmModal({ customer, onClose, onConfirm }: { customer: Custom
 type FilterTab = 'All Clients' | 'VIP' | 'Active' | 'Lead' | 'Inactive';
 const FILTER_TABS: FilterTab[] = ['All Clients', 'VIP', 'Active', 'Lead', 'Inactive'];
 
-export default function WanderluxAdminCustomerCrmPage() {
+export default function TwendeAdminCustomerCrmPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedId, setSelectedId] = useState<string>('');
   const [search, setSearch] = useState('');

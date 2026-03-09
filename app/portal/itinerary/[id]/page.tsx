@@ -16,7 +16,7 @@ export default function ItineraryDetailCustomerViewPage() {
 <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"></path>
 </svg>
 </div>
-<h2 className="text-xl font-extrabold tracking-tighter uppercase">Wanderlux</h2>
+<h2 className="text-xl font-extrabold tracking-tighter uppercase">Twende Africa Tours</h2>
 </div>
 <nav className="hidden md:flex items-center gap-10">
 <Link className="text-sm font-semibold hover:text-primary transition-colors" href="/tours">Destinations</Link>
@@ -282,7 +282,7 @@ export default function ItineraryDetailCustomerViewPage() {
 <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"></path>
 </svg>
 </div>
-<h2 className="text-2xl font-black tracking-tighter uppercase">Wanderlux</h2>
+<h2 className="text-2xl font-black tracking-tighter uppercase">Twende Africa Tours</h2>
 </div>
 <p className="text-white/50 text-lg max-w-sm">
                         Curating the world's most extraordinary travel experiences for the discerning explorer.
@@ -312,7 +312,7 @@ export default function ItineraryDetailCustomerViewPage() {
 </div>
 </div>
 <div className="pt-10 border-t border-border-dark flex flex-col md:flex-row justify-between items-center gap-6">
-<p className="text-white/30 text-xs uppercase tracking-widest font-bold">© 2024 Wanderlux Travel Group. All rights reserved.</p>
+<p className="text-white/30 text-xs uppercase tracking-widest font-bold">© 2024 Twende Africa Tours. All rights reserved.</p>
 <p className="text-white/30 text-xs uppercase tracking-widest font-bold">Crafted for Excellence</p>
 </div>
 </div>

@@ -123,7 +123,7 @@ export function TripHistoryCard({
       doc.setFont("helvetica", "bold");
       doc.setTextColor(198, 16, 16);
       doc.setFontSize(28);
-      doc.text("WANDERLUX", margin, 25);
+      doc.text("TWENDE AFRICA TOURS", margin, 25);
       
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
@@ -216,10 +216,10 @@ export function TripHistoryCard({
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(148, 163, 184);
-      doc.text("Thank you for choosing Wanderlux Travels.", pageWidth / 2, pageHeight - 20, { align: "center" });
-      doc.text("For support, contact us at concierge@wanderlux.com or call +1 (800) WANDER-LUX.", pageWidth / 2, pageHeight - 15, { align: "center" });
+      doc.text("Thank you for choosing Twende Africa Tours.", pageWidth / 2, pageHeight - 20, { align: "center" });
+      doc.text("For support, contact us at info@twendeafricatours.com or call +1 (800) WANDER-LUX.", pageWidth / 2, pageHeight - 15, { align: "center" });
       
-      doc.save(`Wanderlux_Itinerary_${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`);
+      doc.save(`Twende_Itinerary_${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`);
     } catch (error) {
       console.error("Failed to generate PDF", error);
       alert("Failed to generate PDF. Please try again.");

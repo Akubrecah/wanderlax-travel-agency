@@ -3,8 +3,8 @@ import React from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Wanderlux Travel',
-  description: 'Wanderlux Travel Privacy Policy. Learn about how we handle your personal data across our services.',
+  title: 'Privacy Policy | Twende Africa Tours',
+  description: 'Twende Africa Tours Privacy Policy. Learn about how we handle your personal data across our services.',
 };
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       icon: "account_circle",
       title: "1. Information We Collect",
       content: [
-        "To provide you with our bespoke travel services, Wanderlux Travel may collect personal information such as your name, contact details, payment information, dietary preferences, passport details, and travel history.",
+        "To provide you with our travel services, Twende Africa Tours may collect personal information such as your name, contact details, payment information, dietary preferences, passport details, and travel history.",
         "This information is gathered when you request a quote, make a booking, subscribe to our newsletter, or communicate with our concierge team."
       ]
     },
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
       icon: "share",
       title: "3. Data Sharing and Disclosure",
       content: [
-        "Wanderlux Travel does not sell, rent, or trade your personal information. We may share necessary details with trusted third-party service providers and travel partners worldwide (such as hotels and transport companies) strictly for fulfilling your travel arrangements.",
+        "Twende Africa Tours does not sell, rent, or trade your personal information. We may share necessary details with trusted third-party service providers and travel partners worldwide (such as hotels and transport companies) strictly for fulfilling your travel arrangements.",
         "In certain circumstances, we may also disclose data if required by law."
       ]
     },
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
               Privacy <span className="italic text-slate-200">Policy</span>
             </h1>
             <p className="text-slate-300 text-lg md:text-xl font-light max-w-2xl leading-relaxed">
-              Your privacy is our utmost priority. Learn how Wanderlux Travel safeguards and handles your personal information.
+              Your privacy is our utmost priority. Learn how Twende Africa Tours safeguards and handles your personal information.
             </p>
             <p className="text-slate-500 text-sm mt-6 font-medium">
               Last updated: {lastUpdated}
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
                 <div>
                   <h3 className="text-white font-bold text-lg mb-2">Our Commitment</h3>
                   <p className="text-slate-300 leading-relaxed">
-                    At Wanderlux Bespoke Travel, we are committed to protecting your privacy and ensuring your personal data is handled safely, responsibly, and in accordance with applicable data protection laws. 
+                    At Twende Africa Tours, we are committed to protecting your privacy and ensuring your personal data is handled safely, responsibly, and in accordance with applicable data protection laws. 
                   </p>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:privacy@wanderluxtravel.com"
+                href="mailto:privacy@twendeafricatours.com"
                 className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-primary rounded-lg hover:bg-red-700 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
               >
                 <span className="mr-2">Email Privacy Team</span>

@@ -185,7 +185,7 @@ export default function ConciergePage() {
                         <span className="material-symbols-outlined text-[16px]">schedule</span>
                         Back in 1h
                     </span>
-                    <a href="mailto:expert@wanderlux.com" className="flex items-center gap-1.5 text-xs font-bold bg-white/10 text-white px-3 py-1.5 rounded-full hover:bg-white/20 transition-colors">
+                    <a href="mailto:expert@twendeafricatours.com" className="flex items-center gap-1.5 text-xs font-bold bg-white/10 text-white px-3 py-1.5 rounded-full hover:bg-white/20 transition-colors">
                         <span className="material-symbols-outlined text-[16px]">mail</span>
                         Email
                     </a>

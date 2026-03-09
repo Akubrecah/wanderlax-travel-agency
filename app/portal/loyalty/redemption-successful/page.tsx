@@ -46,7 +46,7 @@ export default async function RedemptionSuccessfulPage(props: {
                 <path clipRule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fillRule="evenodd"></path>
               </svg>
             </div>
-            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Wanderlux</h2>
+            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Twende Africa Tours</h2>
           </div>
           <Link href="/portal/loyalty" className="flex items-center justify-center rounded-full h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
             <span className="material-symbols-outlined">close</span>

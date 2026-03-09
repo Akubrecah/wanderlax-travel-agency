@@ -25,7 +25,7 @@ const INITIAL_TESTIMONIALS: Testimonial[] = [
     id: 'TST-842',
     name: 'Sarah Jenkins',
     destination: 'Paris, France',
-    text: 'Wanderlux made our honeymoon absolutely magical. The itinerary was perfectly balanced between sightseeing and relaxation. Every detail was taken care of.',
+    text: 'Twende Africa Tours made our honeymoon absolutely magical. The itinerary was perfectly balanced between sightseeing and relaxation. Every detail was taken care of.',
     rating: 5,
     avatar: 'https://api.dicebear.com/8.x/adventurer/svg?seed=SarahJenkins&backgroundColor=b6e3f4',
     featured: true,

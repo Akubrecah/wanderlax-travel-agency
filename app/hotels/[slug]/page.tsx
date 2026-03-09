@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: HotelDetailPageProps): Promis
   const hotel = await getHotelBySlug(slug);
   
   return {
-    title: hotel ? `${hotel.name} | Wanderlux Travel Agency` : 'Hotel Not Found',
+    title: hotel ? `${hotel.name} | Twende Africa Tours` : 'Hotel Not Found',
     description: hotel?.description || 'Hotel details',
   };
 }

@@ -19,7 +19,7 @@ type AdminBooking = Booking & {
   payments: { status: string; failureReason: string | null }[];
 };
 
-export default function WanderluxAdminDashboardOverviewPage() {
+export default function TwendeAdminDashboardOverviewPage() {
   const [revenuePeriod, setRevenuePeriod] = useState<'monthly' | 'weekly'>('monthly');
   const [showNotifications, setShowNotifications] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);

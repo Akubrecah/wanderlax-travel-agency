@@ -265,7 +265,7 @@ export function AdminReportsClient({ initialDatasets }: { initialDatasets: Recor
 
   function handleExportCSV(format?: string) {
     const csv = ['Destination,Region,Bookings,Revenue,Rating,Status', ...filteredRows.map(r => `"${r.name}","${r.region}",${r.bookings},${r.revenue},${r.rating},${r.status}`)].join('\n');
-    downloadCSV(`wanderlux-${activeRange}.csv`, csv);
+    downloadCSV(`twende-${activeRange}.csv`, csv);
     showToast(`Exported ${format || 'CSV'} ✓`, 'success');
   }
 

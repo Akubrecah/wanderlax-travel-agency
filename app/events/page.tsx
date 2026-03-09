@@ -2,7 +2,7 @@ import { getPublicEvents } from '@/app/actions/eventActions';
 import EventCard from '@/components/events/EventCard';
 
 export const metadata = {
-  title: 'Exclusive Events | Wanderlux',
+  title: 'Exclusive Events | Twende Africa Tours',
   description: 'Discover and reserve tickets for exclusive events around the world.',
 };
 

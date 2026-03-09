@@ -76,11 +76,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-4 group">
                 <span className="material-symbols-outlined text-primary text-xl font-light group-hover:scale-110 transition-transform">call</span>
-                <a href="tel:+18001234567" className="text-slate-400 text-sm hover:text-white transition-colors">+1 (800) WANDERLUX</a>
+                <a href="tel:+18001234567" className="text-slate-400 text-sm hover:text-white transition-colors">+254 700 000000</a>
               </li>
               <li className="flex items-center gap-4 group">
                 <span className="material-symbols-outlined text-primary text-xl font-light group-hover:scale-110 transition-transform">mail</span>
-                <a href="mailto:concierge@wanderlux.com" className="text-slate-400 text-sm hover:text-white transition-colors">concierge@wanderlux.com</a>
+                <a href="mailto:info@twendeafricatours.com" className="text-slate-400 text-sm hover:text-white transition-colors">info@twendeafricatours.com</a>
               </li>
             </ul>
           </div>

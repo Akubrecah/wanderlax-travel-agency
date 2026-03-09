@@ -184,7 +184,7 @@ export default function AdminFleetManagementPage() {
         <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-dark relative">
           <AdminHeader
             title="Fleet Overview"
-            description="Manage and track all vehicles in the Wanderlux fleet."
+            description="Manage and track all vehicles in the Twende Africa Tours fleet."
           >
             <div className="flex items-center gap-3">
               {/* Search (header) */}

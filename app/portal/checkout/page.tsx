@@ -16,7 +16,7 @@ export default function CheckoutPaymentPage() {
               <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
                 <span className="material-symbols-outlined">explore</span>
               </div>
-              <h2 className="text-xl font-bold leading-tight tracking-tight uppercase">Wanderlux</h2>
+              <h2 className="text-xl font-bold leading-tight tracking-tight uppercase">Twende Africa Tours</h2>
             </Link>
             <div className="flex gap-4 items-center">
               <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-widest">
@@ -116,7 +116,7 @@ export default function CheckoutPaymentPage() {
                   </div>
                   <div className="mt-8 flex items-start gap-3">
                     <input className="mt-1 rounded border-slate-700 text-primary focus:ring-primary bg-background-dark" id="save-card" type="checkbox" />
-                    <label className="text-sm text-slate-400" htmlFor="save-card">Save this card for future Wanderlux adventures. Your data is encrypted and secure.</label>
+                    <label className="text-sm text-slate-400" htmlFor="save-card">Save this card for future Twende Africa Tours adventures. Your data is encrypted and secure.</label>
                   </div>
                 </section>
 
@@ -189,7 +189,7 @@ export default function CheckoutPaymentPage() {
                         </span>
                       </button>
                       <p className="text-[10px] text-center text-slate-500 mt-4 leading-relaxed uppercase tracking-tighter">
-                        By clicking "Confirm & Pay", you agree to Wanderlux's 
+                        By clicking "Confirm & Pay", you agree to Twende Africa Tours's 
                         <Link className="underline text-slate-400 hover:text-primary mx-1" href="/terms">Terms of Service</Link> and 
                         <Link className="underline text-slate-400 hover:text-primary mx-1" href="/cancellation-policy">Cancellation Policy</Link>.
                       </p>
@@ -211,7 +211,7 @@ export default function CheckoutPaymentPage() {
           </main>
           {/* Simple Footer */}
           <footer className="px-6 lg:px-40 py-8 border-t border-slate-800 text-center">
-            <p className="text-xs text-slate-600 uppercase tracking-[0.2em]">© 2024 Wanderlux Lifestyle & Travel Group. All Rights Reserved.</p>
+            <p className="text-xs text-slate-600 uppercase tracking-[0.2em]">© 2024 Twende Africa Tours. All Rights Reserved.</p>
           </footer>
         </div>
       </div>

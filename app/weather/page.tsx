@@ -48,7 +48,7 @@ export default function WeatherAndSeasonalTipsPage() {
                                 <div className="bg-[#c51110] p-1.5 rounded-sm">
                                     <span className="material-symbols-outlined text-white text-xl">diamond</span>
                                 </div>
-                                <span className="text-white tracking-[0.3em] uppercase text-xs font-bold">Wanderlux</span>
+                                <span className="text-white tracking-[0.3em] uppercase text-xs font-bold">Twende Africa Tours</span>
                             </div>
                             <div className="mb-12">
                                 <div className="h-1 w-12 bg-[#c51110] mb-6"></div>

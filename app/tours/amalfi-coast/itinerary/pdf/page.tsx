@@ -37,7 +37,7 @@ export default function AmalfiPrintableItineraryPage() {
                 {/* Header Section */}
                 <header className="pt-12 px-8 md:px-16 flex flex-col md:flex-row justify-between items-end gap-6">
                     <div className="flex flex-col gap-2">
-                        <span className="text-[#c51110] font-black text-4xl tracking-tighter uppercase">Wanderlux</span>
+                        <span className="text-[#c51110] font-black text-4xl tracking-tighter uppercase">Twende Africa Tours</span>
                         <span className="text-slate-500 text-sm tracking-[0.2em] uppercase font-medium">Luxury Travel Reimagined</span>
                     </div>
                     <div className="text-right">
@@ -159,7 +159,7 @@ export default function AmalfiPrintableItineraryPage() {
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <span className="material-symbols-outlined text-[#c51110] text-xl">check_circle</span>
-                                    <span className="text-slate-700 text-sm">Full-time Wanderlux concierge & expert local guides</span>
+                                    <span className="text-slate-700 text-sm">Full-time Twende Africa Tours concierge & expert local guides</span>
                                 </li>
                             </ul>
 
@@ -203,14 +203,14 @@ export default function AmalfiPrintableItineraryPage() {
                 <footer className="bg-slate-900 text-white p-12 mt-12 block" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact', backgroundColor: '#0f172a' }}>
                     <div className="flex flex-col md:flex-row justify-between items-center gap-8">
                         <div className="flex flex-col gap-1 items-center md:items-start text-white">
-                            <span className="text-2xl font-black uppercase tracking-tighter">Wanderlux</span>
+                            <span className="text-2xl font-black uppercase tracking-tighter">Twende Africa Tours</span>
                             <span className="text-slate-400 text-[10px] uppercase tracking-widest">Global Luxury Concierge</span>
                         </div>
                         
                         <div className="flex flex-col md:flex-row gap-8 text-center md:text-left text-white">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-[#c51110] uppercase tracking-widest mb-2">Connect</span>
-                                <span className="text-sm text-slate-300">itineraries@wanderlux.com</span>
+                                <span className="text-sm text-slate-300">info@twendeafricatours.com</span>
                                 <span className="text-sm text-slate-300">+1 (888) LUX-TRIP</span>
                             </div>
                             <div className="flex flex-col">
@@ -228,7 +228,7 @@ export default function AmalfiPrintableItineraryPage() {
                     </div>
                     
                     <div className="mt-8 text-center">
-                        <p className="text-[10px] text-slate-500 uppercase tracking-[0.3em]">© {new Date().getFullYear()} Wanderlux Private Travel. All rights reserved.</p>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-[0.3em]">© {new Date().getFullYear()} Twende Africa Tours. All rights reserved.</p>
                     </div>
                 </footer>
 

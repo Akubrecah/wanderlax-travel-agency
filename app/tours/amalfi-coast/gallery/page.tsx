@@ -16,7 +16,7 @@ export default function AmalfiCoastGalleryPage() {
             <div className="text-primary">
               <span className="material-symbols-outlined text-3xl">diamond</span>
             </div>
-            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-black tracking-[0.2em]">WANDERLUX</h2>
+            <h2 className="text-slate-900 dark:text-slate-100 text-xl font-black tracking-[0.2em]">Twende Africa Tours</h2>
           </div>
           <div className="text-primary font-medium tracking-widest text-xs uppercase">
             Private Collection — 2024
@@ -140,7 +140,7 @@ export default function AmalfiCoastGalleryPage() {
           </div>
           <div className="text-right">
             <p className="text-slate-900 dark:text-slate-100 text-sm font-bold tracking-tighter mb-1">UNCOMPROMISING LUXURY</p>
-            <p className="text-slate-400 text-[9px] uppercase tracking-widest">Wanderlux Bespoke Travel Itineraries &copy; 2024</p>
+            <p className="text-slate-400 text-[9px] uppercase tracking-widest">Twende Africa Tours &copy; 2024</p>
           </div>
         </footer>
       </div>

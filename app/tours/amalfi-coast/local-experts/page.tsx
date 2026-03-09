@@ -11,7 +11,7 @@ export default function LocalExpertsPage() {
           <div className="flex justify-between items-start mb-12">
             <div className="flex flex-col">
               <span className="text-[10px] tracking-[0.3em] uppercase font-bold text-[#1a1a1a] mb-1">
-                WANDERLUX
+                Twende Africa Tours
               </span>
               <span className="text-[8px] tracking-[0.2em] uppercase text-[#717171]">
                 LUXURY TRAVEL REIMAGINED
@@ -142,7 +142,7 @@ export default function LocalExpertsPage() {
               UNCOMPROMISING LUXURY
             </p>
             <p className="text-[8px] tracking-[0.1em] text-[#717171] uppercase">
-              WANDERLUX BESPOKE TRAVEL ITINERARIES © 2024
+              TWENDE AFRICA TOURS © 2024
             </p>
           </div>
         </footer>

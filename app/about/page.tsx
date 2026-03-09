@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-export default function AboutWanderluxBrandStoryPage() {
+export default function AboutPage() {
   return (
     <div className="stitch-screen">
       <div className="grain-overlay"></div>
@@ -62,7 +62,7 @@ export default function AboutWanderluxBrandStoryPage() {
 </div>
 </div>
 </section>
-{/* The Pillars of Wanderlux */}
+{/* Our Core Values */}
 <section className="py-24 px-6 lg:px-10 bg-surface-dark/30 border-y border-border-dark relative overflow-hidden">
 {/* Decorative background glow */}
 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
@@ -174,7 +174,7 @@ export default function AboutWanderluxBrandStoryPage() {
 <span className="mr-2">Join Our Journey</span>
 <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
 </Link>
-<a href="/Wanderlux_Company_Profile.txt" download className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-slate-300 transition-all duration-200 bg-white/5 border border-white/20 rounded-lg backdrop-blur-sm hover:bg-white/10 hover:text-white hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+<a href="/Twende_Africa_Tours_Profile.txt" download className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-slate-300 transition-all duration-200 bg-white/5 border border-white/20 rounded-lg backdrop-blur-sm hover:bg-white/10 hover:text-white hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
 <span className="mr-2">Download Profile</span>
 <span className="material-symbols-outlined transition-transform group-hover:translate-y-1">download</span>
 </a>

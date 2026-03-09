@@ -32,7 +32,7 @@ export default function PackingEssentialsPage() {
                                 <path clipRule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fillRule="evenodd"></path>
                             </svg>
                         </div>
-                        <h2 className="text-xl font-bold tracking-[0.2em] uppercase">Wanderlux</h2>
+                        <h2 className="text-xl font-bold tracking-[0.2em] uppercase">Twende Africa Tours</h2>
                     </div>
                     <div className="text-xs tracking-[0.3em] uppercase opacity-50 hidden md:block">
                         Itinerary No. 842 / Amalfi
@@ -103,7 +103,7 @@ export default function PackingEssentialsPage() {
                     <div className="max-w-3xl mx-auto">
                         <div className="relative p-8 border border-primary/40 rounded-xl bg-primary/5">
                             <div className="absolute -top-3 left-8 bg-background-dark px-4">
-                                <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">Wanderlux Tip</span>
+                                <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">Travel Tip</span>
                             </div>
                             <p className="text-lg italic font-light leading-relaxed text-slate-200">
                                 &quot;The cobblestone paths of Positano are as unforgiving as they are beautiful. We recommend prioritizing high-quality leather sandals for the daytime and reserving your stiletto heels strictly for dinner service at La Sponda.&quot;
@@ -118,7 +118,7 @@ export default function PackingEssentialsPage() {
                         <p className="text-[10px] uppercase tracking-[0.4em] opacity-40">Uncompromising Luxury</p>
                     </div>
                     <div className="text-[10px] uppercase tracking-[0.4em] opacity-40">
-                        © 2024 Wanderlux Private Travel
+                        © 2024 Twende Africa Tours
                     </div>
                 </footer>
             </div>

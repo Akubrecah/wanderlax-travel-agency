@@ -34,7 +34,7 @@ const socialChannels: SocialChannel[] = [
     ),
     color: '#E4405F',
     hoverBg: 'hover:bg-[#E4405F]/15 hover:border-[#E4405F]/40',
-    url: 'https://ig.me/m/wanderlux',
+    url: 'https://instagram.com/twendeafricatours',
     label: 'Message on Instagram',
   },
   {
@@ -46,7 +46,7 @@ const socialChannels: SocialChannel[] = [
     ),
     color: '#1877F2',
     hoverBg: 'hover:bg-[#1877F2]/15 hover:border-[#1877F2]/40',
-    url: 'https://m.me/wanderlux',
+    url: 'https://facebook.com/twendeafricatours',
     label: 'Chat on Messenger',
   },
   {
@@ -58,7 +58,7 @@ const socialChannels: SocialChannel[] = [
     ),
     color: '#ffffff',
     hoverBg: 'hover:bg-white/10 hover:border-white/30',
-    url: 'https://twitter.com/intent/user?screen_name=wanderlux',
+    url: 'https://twitter.com/intent/user?screen_name=twendeafricatours',
     label: 'DM on X',
   },
   {
@@ -70,7 +70,7 @@ const socialChannels: SocialChannel[] = [
     ),
     color: '#0088cc',
     hoverBg: 'hover:bg-[#0088cc]/15 hover:border-[#0088cc]/40',
-    url: 'https://t.me/wanderlux',
+    url: 'https://t.me/twendeafricatours',
     label: 'Chat on Telegram',
   },
 ];

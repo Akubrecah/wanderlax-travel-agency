@@ -234,7 +234,7 @@ export default function TravelerWishlistSavedJourneysPage() {
 </button>
 </div>
 <h4 className="text-xl font-bold text-slate-100 mb-2">Amalfi Coast Superyacht</h4>
-<p className="text-slate-400 text-sm line-clamp-2">A 7-day bespoke voyage through Positano and Capri aboard the 65m Wanderlux Solis. Fully crewed excellence.</p>
+<p className="text-slate-400 text-sm line-clamp-2">A 7-day bespoke voyage through Positano and Capri aboard the 65m Elite Solis. Fully crewed excellence.</p>
 </div>
 <div className="mt-6 flex items-center justify-between">
 <p className="text-lg font-bold text-slate-100">$85,000 <span className="text-xs font-normal text-slate-500">/ week</span></p>

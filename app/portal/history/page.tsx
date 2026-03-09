@@ -178,7 +178,7 @@ export default async function TripHistoryArchivePage() {
               
               {/* Footer Stats (Subtle) */}
               <footer className="mt-20 py-8 border-t border-slate-200 dark:border-border-dark flex flex-col md:flex-row justify-between items-center gap-4">
-                <p className="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-bold">Wanderlux Archive © 2024</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-bold">Twende Africa Tours Archive © 2024</p>
                 <div className="flex gap-10">
                   <div className="text-center">
                     <p className="text-slate-900 dark:text-white text-xl font-black italic">{totalTrips}</p>

@@ -165,7 +165,7 @@ export default function AdminPaymentsClient() {
     
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `wanderlux_transactions_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `twende_transactions_${new Date().toISOString().split('T')[0]}.csv`);
     
     // Append to body, click, and clean up
     document.body.appendChild(link);
@@ -644,7 +644,7 @@ export default function AdminPaymentsClient() {
                   <span className="material-symbols-outlined text-primary text-3xl">auto_graph</span>
                   Advanced Financial Analytics
                 </h3>
-                <p className="text-sm text-slate-500 mt-1 font-bold tracking-wide">Deeper insights into Wanderlux revenue generation & patterns</p>
+                <p className="text-sm text-slate-500 mt-1 font-bold tracking-wide">Deeper insights into Twende Africa Tours revenue generation & patterns</p>
               </div>
               <button onClick={() => setIsAnalyticsModalOpen(false)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-colors bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 text-slate-500">
                 <span className="material-symbols-outlined">close</span>
