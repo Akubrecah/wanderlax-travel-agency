@@ -4,13 +4,17 @@ import { confirmBookingByRef } from "@/app/actions/bookingActions";
 import { recordStripePayment, recordStripeFailure } from "@/app/actions/paymentActions";
 import { prisma } from "@/lib/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "placeholder", {
   apiVersion: "2024-04-10" as any,
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 export async function POST(req: Request) {
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Payment service not configured" }, { status: 503 });
+  }
+
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
 
