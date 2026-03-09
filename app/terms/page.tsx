@@ -86,7 +86,7 @@ export default function TermsOfServicePage() {
       content: [
         "Any disputes arising from or relating to these terms or our services shall be resolved through good-faith negotiation between the parties.",
         "If a dispute cannot be resolved through negotiation, it shall be submitted to binding arbitration in accordance with the rules of the International Chamber of Commerce (ICC).",
-        "These terms shall be governed by and construed in accordance with the laws of England and Wales, without regard to conflict of law principles. The courts of London shall have exclusive jurisdiction."
+        "These terms shall be governed by and construed in accordance with the laws of Kenya. The courts of Nairobi shall have exclusive jurisdiction."
       ]
     },
     {
@@ -95,7 +95,7 @@ export default function TermsOfServicePage() {
       content: [
         "If you have any questions about these Terms of Service, please contact our legal team at legal@twendeafricatours.com or call our concierge line at +254 700 000000.",
         "For urgent matters related to active bookings, please reach out to your dedicated travel concierge directly or contact our 24/7 support line.",
-        "Twende Africa Tours | Mayfair Luxury District, London, W1J 7BR, United Kingdom."
+        "Twende Africa Tours | Westlands, Nairobi, Kenya, 00100."
       ]
     }
   ];

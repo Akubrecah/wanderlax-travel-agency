@@ -163,11 +163,10 @@ export default function ContactPage() {
                 <div>
                   <p className="text-lg text-white font-medium">Twende Africa Tours Headquarters</p>
                   <p className="text-text-muted font-sans font-light leading-relaxed mt-1">
-                    45 Park Lane, Mayfair<br/>
-                    London, W1K 1PN<br/>
-                    United Kingdom
+                    Westlands, Nairobi<br/>
+                    Kenya, 00100
                   </p>
-                  <a className="inline-flex items-center gap-2 text-primary text-sm font-bold mt-3 hover:underline" href="https://maps.google.com/?q=45+Park+Lane+Mayfair+London" target="_blank" rel="noopener noreferrer">
+                  <a className="inline-flex items-center gap-2 text-primary text-sm font-bold mt-3 hover:underline" href="https://maps.google.com/?q=Westlands+Nairobi+Kenya" target="_blank" rel="noopener noreferrer">
                     Get Directions <span className="material-symbols-outlined text-sm">north_east</span>
                   </a>
                 </div>

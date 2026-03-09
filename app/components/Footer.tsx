@@ -72,7 +72,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-4 group">
                 <span className="material-symbols-outlined text-primary text-xl font-light group-hover:scale-110 transition-transform">location_on</span>
-                <span className="text-slate-400 text-sm leading-relaxed">Mayfair Luxury District,<br />London, W1J 7BR</span>
+                <span className="text-slate-400 text-sm leading-relaxed">Nairobi, Kenya<br />P.O. Box 00100</span>
               </li>
               <li className="flex items-center gap-4 group">
                 <span className="material-symbols-outlined text-primary text-xl font-light group-hover:scale-110 transition-transform">call</span>

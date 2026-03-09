@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const OFFICES = [
   { name: 'New York HQ', address: '5th Avenue, Suite 402\nNew York, NY 10018', phone: '+1 (212) 555-0199', top: '35%', left: '28%', delay: '0s' },
-  { name: 'London Office', address: 'Mayfair, 12 Berkeley Sq\nLondon, W1J 6BD', phone: '+44 20 7946 0958', top: '32%', left: '48%', delay: '0.5s' },
+  { name: 'Nairobi Office', address: 'Westlands, Nairobi\nKenya, 00100', phone: '+254 700 000000', top: '55%', left: '56%', delay: '0.5s' },
   { name: 'Singapore Hub', address: 'Marina Bay Financial Ctr\nSingapore 018981', phone: '+65 6789 0123', top: '55%', left: '75%', delay: '1s' }
 ];
 
