@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface Event {
@@ -22,12 +22,25 @@ interface HomeClientProps {
 export default function HomeClient({ featuredEvents }: HomeClientProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const eventsCarouselRef = useRef<HTMLDivElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [destination, setDestination] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [travelers, setTravelers] = useState(2);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+
+  // Set slow cinematic playback once video is ready
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    const setSpeed = () => { video.playbackRate = 0.6; };
+    video.addEventListener('canplay', setSpeed);
+    setSpeed();
+    return () => video.removeEventListener('canplay', setSpeed);
+  }, []);
+
+
 
   const bookingTabs = [
     { icon: 'flight', label: 'Flights' },
@@ -79,35 +92,61 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
 
   return (
     <div className="relative w-full flex flex-col overflow-x-hidden">
-      {/* Hero Section */}
+      {/* Hero Section with Video Background */}
       <div className="relative pt-[72px]">
-        <div className="relative h-[90vh] min-h-[600px] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop')" }}>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-background-dark/40 via-transparent to-background-dark"></div>
-          <div className="absolute inset-0 bg-noise opacity-50 mix-blend-overlay"></div>
+        <div style={{ position: 'relative', height: '90vh', minHeight: '600px', width: '100%', overflow: 'hidden' }}>
 
-          <div className="relative h-full flex flex-col items-center justify-center px-6 sm:px-8 text-center z-10">
+          {/* Video — full bleed, always visible */}
+          <video
+            ref={heroVideoRef}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+          >
+            <source src="/Kenya_Africa_Wildlife_Video_Prompt.mp4" type="video/mp4" />
+          </video>
+
+          {/* Dark gradient overlay so text is readable */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.85) 100%)' }}></div>
+
+
+          {/* Hero Content */}
+          <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 2rem' }}>
             <div className="max-w-4xl mx-auto flex flex-col items-center gap-6">
               <span className="text-primary font-semibold tracking-[0.25em] uppercase text-xs sm:text-sm">
-                Curated journeys for the discerning traveler
+                🇰🇪 Discover the Heart of Africa
               </span>
               <h1 className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9]">
-                Experience the <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                  Extraordinary
+                Nairobi to the <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-orange-300 to-amber-500">
+                  Wild Savanna
                 </span>
               </h1>
               <p className="text-slate-300 max-w-xl text-base sm:text-lg md:text-xl font-light leading-relaxed">
-                Unlock a world of unparalleled luxury. From private jets to secluded islands, we craft moments that last a lifetime.
+                From the vibrant streets of Nairobi to the untamed wilderness of the Maasai Mara — experience Kenya&apos;s breathtaking wildlife adventures.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Link href="/tours" className="flex items-center justify-center h-14 px-8 rounded-full bg-white text-background-dark hover:bg-slate-100 font-bold text-base transition-all transform hover:scale-105">
+                <Link
+                  href="/tours"
+                  style={{ backgroundColor: '#C61010', color: '#ffffff', fontWeight: 700 }}
+                  className="flex items-center justify-center h-14 px-8 rounded-full text-base transition-all transform hover:scale-105 shadow-2xl hover:brightness-110"
+                >
                   Start Your Journey
                 </Link>
                 <Link href="/about" className="flex items-center justify-center h-14 px-8 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 font-medium text-base transition-all">
-                  <span className="material-symbols-outlined mr-2">play_circle</span>
-                  Watch Film
+                  <span className="material-symbols-outlined mr-2">explore</span>
+                  Explore Kenya
                 </Link>
               </div>
             </div>
