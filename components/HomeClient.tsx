@@ -318,7 +318,7 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
             </div>
             <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               {[
-                { icon: 'safari', title: 'Tours & Safaris', desc: 'Exciting safari adventures, wildlife tours, cultural experiences, and holiday packages across Kenya and other African destinations.' },
+                { icon: 'travel_explore', title: 'Tours & Safaris', desc: 'Exciting safari adventures, wildlife tours, cultural experiences, and holiday packages across Kenya and other African destinations.' },
                 { icon: 'flight_takeoff', title: 'International Travel', desc: 'Travel packages for global destinations including city tours, holiday vacations, and guided travel experiences worldwide.' },
                 { icon: 'hotel', title: 'Hotel Booking', desc: 'Assistance booking comfortable and affordable hotels, resorts, and holiday apartments in various destinations worldwide.' },
                 { icon: 'confirmation_number', title: 'Flight Reservations', desc: 'Find and book convenient and cost-effective flight tickets for both domestic and international travel.' },
