@@ -212,7 +212,7 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
           <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Exclusive Events</h2>
-              <p className="text-text-muted">Directly managed by wanderlax admin panel</p>
+              <p className="text-text-muted">Curated events and experiences across Africa and the world</p>
             </div>
             <div className="flex gap-2">
               <button
@@ -309,8 +309,8 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
           <div className="flex flex-col md:flex-row gap-12 items-start">
             <div className="md:w-1/3 sticky top-24">
               <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Our Services</h2>
-              <h3 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight">Seamless booking for every leg of your trip.</h3>
-              <p className="text-text-muted mb-8 text-lg">We handle the details so you can focus on the experience. From door-to-door transportation to exclusive access.</p>
+              <h3 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight">Everything you need for a perfect journey.</h3>
+              <p className="text-text-muted mb-8 text-lg">From safari adventures in Kenya to international city tours — we handle every detail so you can focus on the experience.</p>
               <Link href="/tours" className="group flex items-center gap-2 text-white font-bold border-b border-primary pb-1 hover:text-primary transition-colors">
                 View All Services
                 <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
@@ -318,10 +318,12 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
             </div>
             <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               {[
-                { icon: 'flight_takeoff', title: 'Private Jets', desc: 'Skip the lines and fly in absolute comfort. We arrange charters that fit your schedule perfectly.' },
-                { icon: 'apartment', title: '5-Star Suites', desc: "Access to the world's most exclusive penthouses and suites, inspected for quality assurance." },
-                { icon: 'directions_car', title: 'Chauffeur Service', desc: 'Premium vehicles at your disposal 24/7. Professional drivers who know the local routes.' },
-                { icon: 'restaurant', title: 'Fine Dining', desc: 'Reservations at Michelin-starred restaurants and private chef experiences in your villa.' }
+                { icon: 'safari', title: 'Tours & Safaris', desc: 'Exciting safari adventures, wildlife tours, cultural experiences, and holiday packages across Kenya and other African destinations.' },
+                { icon: 'flight_takeoff', title: 'International Travel', desc: 'Travel packages for global destinations including city tours, holiday vacations, and guided travel experiences worldwide.' },
+                { icon: 'hotel', title: 'Hotel Booking', desc: 'Assistance booking comfortable and affordable hotels, resorts, and holiday apartments in various destinations worldwide.' },
+                { icon: 'confirmation_number', title: 'Flight Reservations', desc: 'Find and book convenient and cost-effective flight tickets for both domestic and international travel.' },
+                { icon: 'local_taxi', title: 'Airport Transfers', desc: 'Reliable airport pick-up and drop-off services to ensure a smooth, stress-free travel experience from arrival to departure.' },
+                { icon: 'directions_car', title: 'Car Hire', desc: 'Self-driven vehicles, chauffeur-driven cars, safari tour vehicles, and corporate transport — flexible options for every need.' },
               ].map((service, i) => (
                 <div key={i} className="group bg-background-dark border border-border-dark p-8 rounded-2xl hover:border-primary/50 transition-colors duration-300">
                   <div className="size-14 rounded-xl bg-surface-dark border border-border-dark flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
@@ -341,10 +343,10 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { val: '120+', label: 'Countries' },
-              { val: '15k', label: 'Happy Travelers' },
-              { val: '850', label: 'Luxury Partners' },
-              { val: '24/7', label: 'Concierge Support' }
+              { val: '40+', label: 'Destinations' },
+              { val: '2k+', label: 'Happy Travelers' },
+              { val: '6', label: 'Services Offered' },
+              { val: '24/7', label: 'Support Available' }
             ].map((stat, i) => (
               <div key={i} className="flex flex-col gap-1">
                 <span className="text-4xl md:text-5xl font-black text-white">{stat.val}</span>
@@ -362,8 +364,8 @@ export default function HomeClient({ featuredEvents }: HomeClientProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/60"></div>
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
           <span className="material-symbols-outlined text-5xl text-primary animate-bounce">mail</span>
-          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">Join the Elite Traveler&apos;s Club</h2>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">Get exclusive access to secret deals, private island offers, and luxury travel inspiration delivered to your inbox.</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">Stay Connected with Twende Africa Tours</h2>
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">Get exclusive travel deals, safari packages, and travel inspiration delivered straight to your inbox.</p>
 
           {newsletterSubmitted ? (
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 max-w-lg mx-auto animate-fade-in-up">
