@@ -27,7 +27,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
-              Crafting unforgettable, bespoke journeys for the world&apos;s most discerning travelers since 2010. Excellence redefined.
+              A professional tour &amp; travel agency connecting you with the beauty of Africa and destinations across the world. Reliable, affordable, and unforgettable.
             </p>
             <div className="flex gap-5">
               {[

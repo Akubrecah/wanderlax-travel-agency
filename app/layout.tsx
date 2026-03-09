@@ -8,7 +8,7 @@ import SocialChatWidget from "./components/SocialChatWidget";
 
 export const metadata: Metadata = {
   title: "Twende Africa Tours | Explore Africa and the World",
-  description: "Curated journeys for the discerning traveler. Experience private jets, secluded islands, and unforgettable luxury destinations worldwide.",
+  description: "Twende Africa Tours is a professional tour and travel agency providing memorable travel experiences across Africa and international destinations. Reliable, affordable, and exciting travel for individuals, families, and corporate clients.",
 };
 
 export default function RootLayout({

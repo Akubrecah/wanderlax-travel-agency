@@ -18,12 +18,12 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="absolute inset-0 z-10 bg-gradient-to-b from-background-dark/30 via-background-dark/10 to-background-dark"></div>
 {/* Hero Content */}
 <div className="relative z-20 flex flex-col items-center text-center px-6 max-w-5xl mx-auto mt-20">
-<span className="text-primary tracking-[0.2em] text-sm font-bold uppercase mb-6 animate-fade-in-up">Est. 2012</span>
+<span className="text-primary tracking-[0.2em] text-sm font-bold uppercase mb-6 animate-fade-in-up">Professional Tour & Travel Agency</span>
 <h1 className="text-white font-serif text-5xl md:text-7xl lg:text-8xl font-medium leading-[1.1] tracking-tight mb-6 drop-shadow-xl">
-                    The Art of <br/> <span className="italic text-slate-200">Extraordinary</span> Travel
+                    Explore Africa <br/> <span className="italic text-slate-200">and the World</span>
                 </h1>
 <p className="text-slate-200 text-lg md:text-xl font-light max-w-2xl leading-relaxed opacity-90">
-                    Redefining luxury for the modern voyager, one bespoke journey at a time.
+                    Memorable travel experiences across Africa and international destinations — for individuals, families, and corporate clients.
                 </p>
 <div className="mt-12">
 <span className="material-symbols-outlined text-white/50 animate-bounce text-4xl">keyboard_arrow_down</span>
@@ -39,24 +39,24 @@ export default function AboutWanderluxBrandStoryPage() {
 <span className="absolute -top-10 -left-6 text-9xl text-primary/10 font-serif">&quot;</span>
 <blockquote className="relative z-10">
 <p className="text-3xl md:text-4xl lg:text-5xl font-serif leading-tight text-white mb-8">
-                                True luxury is not just about where you go, but how the journey makes you <span className="text-primary italic">feel</span>.
+                                Every journey should be <span className="text-primary italic">comfortable</span>, safe, and truly unforgettable.
                             </p>
 <footer className="text-slate-400 font-medium tracking-wide uppercase text-sm flex items-center gap-4">
 <div className="h-px w-12 bg-primary"></div>
-                                Eleanor Vance, Founder
+                                Twende Africa Tours Team
                             </footer>
 </blockquote>
 </div>
 {/* Narrative Text */}
 <div className="lg:col-span-7 flex flex-col gap-6 text-slate-300 text-lg leading-relaxed font-light">
 <p>
-                            Wanderlux began with a simple yet ambitious premise: to curate travel experiences that linger in the memory long after the suitcases are unpacked. We realized that the modern traveler seeks more than just five-star accommodations; they seek connection, authenticity, and the thrill of the undiscovered.
+                            Twende Africa Tours is a professional tour and travel agency dedicated to providing memorable travel experiences across Africa and international destinations. We focus on delivering reliable, affordable, and exciting travel services to individuals, families, corporate clients, and tourists seeking adventure, relaxation, and cultural exploration.
                         </p>
 <p>
-                            Over the last decade, we have built a network of local experts, historians, and tastemakers across the globe. From private viewings of the Vatican to dinner under the stars in the Namib Desert, our itineraries are crafted with the precision of a master jeweler.
+                            Our goal is to connect travelers with the beauty of Africa while also providing access to global travel destinations. We pride ourselves on offering personalized travel solutions that make every journey comfortable, safe, and unforgettable.
                         </p>
 <p>
-                            We don&apos;t just book trips. We design chapters of your life story, ensuring every moment is seamless, exclusive, and undeniably yours.
+                            Whether you&apos;re seeking a thrilling safari adventure, a relaxing beach getaway, a cultural immersion, or a seamless corporate retreat, Twende Africa Tours is your trusted partner every step of the way.
                         </p>
 </div>
 </div>
@@ -68,8 +68,8 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
 <div className="max-w-7xl mx-auto relative z-10">
 <div className="text-center mb-16">
-<h2 className="text-3xl md:text-4xl font-bold text-white mb-4">The Pillars of Wanderlux</h2>
-<p className="text-slate-400 max-w-2xl mx-auto">Our commitment to crafting the unforgettable rests on three foundational principles.</p>
+<h2 className="text-3xl md:text-4xl font-bold text-white mb-4">What We Stand For</h2>
+<p className="text-slate-400 max-w-2xl mx-auto">Our commitment to exceptional travel rests on three core principles that guide everything we do.</p>
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 {/* Pillar 1 */}
@@ -77,9 +77,9 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="size-12 rounded-lg bg-gradient-to-br from-primary to-rose-900 flex items-center justify-center text-white mb-6 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
 <span className="material-symbols-outlined">diamond</span>
 </div>
-<h3 className="text-xl font-bold text-white mb-3">Curated Excellence</h3>
+<h3 className="text-xl font-bold text-white mb-3">Reliable & Affordable</h3>
 <p className="text-slate-400 leading-relaxed">
-                            Every destination is hand-picked for its singular beauty and exclusivity. We vet every hotel, guide, and experience personally.
+                            We deliver dependable travel services at competitive prices, ensuring every client gets exceptional value without compromise.
                         </p>
 </div>
 {/* Pillar 2 */}
@@ -87,9 +87,9 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="size-12 rounded-lg bg-gradient-to-br from-primary to-rose-900 flex items-center justify-center text-white mb-6 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
 <span className="material-symbols-outlined">public</span>
 </div>
-<h3 className="text-xl font-bold text-white mb-3">Global Reach</h3>
+<h3 className="text-xl font-bold text-white mb-3">Africa & Beyond</h3>
 <p className="text-slate-400 leading-relaxed">
-                            Access to the world&apos;s most remote and breathtaking corners. From the Arctic Circle to the depths of the Amazon, nowhere is out of reach.
+                            Rooted in Africa&apos;s breathtaking landscapes, we also connect you to global destinations — making the whole world within your reach.
                         </p>
 </div>
 {/* Pillar 3 */}
@@ -97,9 +97,9 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="size-12 rounded-lg bg-gradient-to-br from-primary to-rose-900 flex items-center justify-center text-white mb-6 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
 <span className="material-symbols-outlined">handshake</span>
 </div>
-<h3 className="text-xl font-bold text-white mb-3">Bespoke Service</h3>
+<h3 className="text-xl font-bold text-white mb-3">Personalized Journeys</h3>
 <p className="text-slate-400 leading-relaxed">
-                            Tailored itineraries that anticipate your every desire. Our concierges are available 24/7 to ensure your journey is flawless.
+                            Tailored travel solutions for individuals, families, corporate clients, and tourists — every experience designed around you.
                         </p>
 </div>
 </div>
@@ -165,9 +165,9 @@ export default function AboutWanderluxBrandStoryPage() {
 <div className="mb-8 p-3 rounded-full border border-white/10 bg-white/5">
 <span className="material-symbols-outlined text-white text-3xl">explore</span>
 </div>
-<h2 className="text-4xl md:text-6xl font-serif text-white mb-6">Ready to Rewrite Your Story?</h2>
+<h2 className="text-4xl md:text-6xl font-serif text-white mb-6">Ready to Start Your Journey?</h2>
 <p className="text-slate-300 text-lg mb-10 max-w-xl">
-                    Let us design the journey you&apos;ve always dreamed of. The world is waiting, and we hold the key.
+                    Let us connect you with the beauty of Africa and destinations across the world. Your next adventure starts here.
                 </p>
 <div className="flex flex-col sm:flex-row gap-4">
 <Link href="/contact" className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-primary rounded-lg hover:bg-red-700 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background-dark">
