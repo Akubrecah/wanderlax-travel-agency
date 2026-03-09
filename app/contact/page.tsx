@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-export default function ContactTwende Africa ToursGetInTouchPage() {
+export default function ContactPage() {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
