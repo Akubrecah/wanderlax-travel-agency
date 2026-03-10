@@ -141,21 +141,21 @@ export default function Header() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-black/60 backdrop-blur-xl px-6 py-4 lg:px-10 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-[1.02]">
+        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02] shrink-0">
           <img
             src="/logo.png"
             alt="Twende Africa Tours Logo"
-            className="h-12 w-auto object-contain"
+            className="h-9 md:h-12 w-auto object-contain"
             style={{ mixBlendMode: 'screen' }}
           />
-          <div className="flex flex-col text-left">
-            <h2 className="text-white text-xl font-bold tracking-tight leading-none">Twende Africa Tours</h2>
-            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
+          <div className="hidden md:flex flex-col text-left">
+            <h2 className="text-white text-base lg:text-xl font-bold tracking-tight leading-none">Twende Africa Tours</h2>
+            <span className="text-[9px] lg:text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden xl:flex items-center gap-8 flex-1 justify-center px-4">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center px-2 xl:px-4">
           {/* Experiences Dropdown */}
           <div 
             className="relative group"
