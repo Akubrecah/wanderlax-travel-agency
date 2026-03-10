@@ -17,13 +17,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-10">
           <div className="space-y-8">
             {/* Footer logo */}
-            <Link href="/" className="flex items-center group">
+            <Link href="/" className="flex items-center gap-3 group">
               <img
                 src="/logo.png"
                 alt="Twende Africa Tours Logo"
-                className="h-16 w-auto object-contain"
+                className="h-14 w-auto object-contain"
                 style={{ mixBlendMode: 'screen' }}
               />
+              <div className="flex flex-col">
+                <h2 className="text-white text-xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors">Twende Africa Tours</h2>
+                <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
+              </div>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
               A professional tour &amp; travel agency connecting you with the beauty of Africa and destinations across the world. Reliable, affordable, and unforgettable.
