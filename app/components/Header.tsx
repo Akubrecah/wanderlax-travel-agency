@@ -141,14 +141,12 @@ export default function Header() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-black/60 backdrop-blur-xl px-6 py-4 lg:px-10 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-[1.02]">
-          <div className="flex items-center justify-center size-9 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/10 group-hover:shadow-primary/20 transition-all">
-            <span className="material-symbols-outlined text-2xl font-light">diamond</span>
-          </div>
-          <div className="flex flex-col text-left">
-            <h2 className="text-white text-xl font-bold tracking-tight leading-none">Twende Africa Tours</h2>
-            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] leading-none mt-1">Explore Africa and the World</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02]">
+          <img
+            src="/logo.png"
+            alt="Twende Africa Tours Logo"
+            className="h-12 w-auto object-contain"
+          />
         </Link>
 
         {/* Desktop Nav */}
