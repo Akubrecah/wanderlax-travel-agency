@@ -22,6 +22,7 @@ export default function Footer() {
                 src="/logo.png"
                 alt="Twende Africa Tours Logo"
                 className="h-16 w-auto object-contain"
+                style={{ mixBlendMode: 'screen' }}
               />
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">

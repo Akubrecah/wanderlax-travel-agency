@@ -146,6 +146,7 @@ export default function Header() {
             src="/logo.png"
             alt="Twende Africa Tours Logo"
             className="h-12 w-auto object-contain"
+            style={{ mixBlendMode: 'screen' }}
           />
         </Link>
 
