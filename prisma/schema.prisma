@@ -36,6 +36,10 @@ model User {
   tickets                Ticket[]
   tourBookings           TourBooking[]
   wishlistItems          WishlistItem[]
+  suppliedTours          TourPackage[]    @relation("SupplierTours")
+  suppliedHotels         Hotel[]          @relation("SupplierHotels")
+  suppliedCars           Car[]            @relation("SupplierCars")
+  suppliedEvents         Event[]          @relation("SupplierEvents")
 
   @@index([email])
   @@index([role])
@@ -130,6 +134,8 @@ model Car {
   updatedAt       DateTime         @updatedAt
   bookings        CarHireBooking[]
   maintenanceLogs MaintenanceLog[]
+  supplierId      String?
+  supplier        User?            @relation("SupplierCars", fields: [supplierId], references: [id])
 
   @@index([status])
   @@index([category])
@@ -192,6 +198,8 @@ model Hotel {
   bookings      HotelBooking[]
   rooms         HotelRoom[]
   reviews       Review[]
+  supplierId    String?
+  supplier      User?           @relation("SupplierHotels", fields: [supplierId], references: [id])
 
   @@index([slug])
   @@index([destinationId])
@@ -268,6 +276,8 @@ model TourPackage {
   bookings       TourBooking[]
   itinerary      TourItinerary[]
   destination    Destination        @relation(fields: [destinationId], references: [id])
+  supplierId     String?
+  supplier       User?              @relation("SupplierTours", fields: [supplierId], references: [id])
 
   @@index([slug])
   @@index([destinationId])
@@ -579,6 +589,8 @@ model Event {
   ticketTypes   EventTicketType[]
   waitlist      EventWaitlist[]
   tickets       Ticket[]
+  supplierId    String?
+  supplier      User?              @relation("SupplierEvents", fields: [supplierId], references: [id])
 
   @@index([slug])
   @@index([status])
