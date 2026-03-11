@@ -112,6 +112,10 @@ export function AdminSidebar() {
             <span className="material-symbols-outlined text-[24px]">switch_account</span>
             <span className="text-sm font-medium">User Dashboard</span>
           </Link>
+          <Link className="flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-400/80 hover:bg-surface-dark hover:text-emerald-400 transition-all group border-l-4 border-transparent hover:border-border-dark mt-2" href="/supplier">
+            <span className="material-symbols-outlined text-[24px]">storefront</span>
+            <span className="text-sm font-medium">Supplier Dashboard</span>
+          </Link>
         </div>
       </nav>
 

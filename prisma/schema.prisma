@@ -679,6 +679,7 @@ model EventRefundPolicy {
 
 enum Role {
   CUSTOMER
+  SUPPLIER
   CONSULTANT
   ADMIN
   SUPER_ADMIN

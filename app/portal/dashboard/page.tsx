@@ -27,6 +27,12 @@ const consultantQuickLinks = [
   { icon: 'person', label: 'My Profile', href: '/portal/profile', description: 'View your profile' },
 ];
 
+const supplierQuickLinks = [
+  { icon: 'storefront', label: 'Supplier Dashboard', href: '/supplier', description: 'Manage listings and bookings' },
+  { icon: 'sell', label: 'My Listings', href: '/supplier/listings', description: 'Manage your touring services' },
+  { icon: 'person', label: 'My Profile', href: '/portal/profile', description: 'View your profile' },
+];
+
 export default async function TravelerProfileDashboardPage() {
   const { userId } = await auth();
   
@@ -375,7 +381,9 @@ export default async function TravelerProfileDashboardPage() {
                 ? adminQuickLinks 
                 : dbUser?.role === 'CONSULTANT' 
                   ? consultantQuickLinks 
-                  : travelerLinks
+                  : dbUser?.role === 'SUPPLIER'
+                    ? supplierQuickLinks
+                    : travelerLinks
               ).map((link) => (
                 <Link
                   key={link.label}

@@ -288,11 +288,14 @@ export default function AdminStaffClient() {
                               ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                               : s.role === 'CONSULTANT'
                               ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                              : s.role === 'SUPPLIER'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                               : 'bg-slate-500/10 text-slate-400 border-slate-500/20'
                           }`}
                         >
                           <option value="CUSTOMER">Staff Member</option>
                           <option value="CONSULTANT">Consultant</option>
+                          <option value="SUPPLIER">Supplier</option>
                           <option value="ADMIN">Admin</option>
                           <option value="SUPER_ADMIN">Super Admin</option>
                         </select>
@@ -390,6 +393,7 @@ export default function AdminStaffClient() {
                   <select required name="role" className="w-full bg-slate-50 dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl p-3 text-slate-900 dark:text-white text-sm focus:border-primary outline-none transition-all cursor-pointer">
                     <option value="STAFF">Staff Member</option>
                     <option value="CONSULTANT">Travel Consultant</option>
+                    <option value="SUPPLIER">Supplier</option>
                     <option value="ADMIN">Administrator</option>
                     <option value="SUPER_ADMIN">Super Admin</option>
                   </select>

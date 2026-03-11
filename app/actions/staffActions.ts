@@ -18,7 +18,7 @@ export async function getStaff() {
     const targetEmail = 'poweldayck@gmail.com';
     const staff = allUsers.filter(user => {
       const isStaff = user.staffProfile !== null || 
-                     (['ADMIN', 'SUPER_ADMIN', 'CONSULTANT'] as string[]).includes(user.role);
+                     (['ADMIN', 'SUPER_ADMIN', 'CONSULTANT', 'SUPPLIER'] as string[]).includes(user.role);
       const isTarget = user.email.toLowerCase().trim() === targetEmail;
       return isStaff || isTarget;
     });
