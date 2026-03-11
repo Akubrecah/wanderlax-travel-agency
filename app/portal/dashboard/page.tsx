@@ -14,6 +14,7 @@ const travelerLinks = [
 ];
 
 const adminQuickLinks = [
+  { icon: 'storefront', label: 'Supplier Dashboard', href: '/supplier', description: 'View supplier portal' },
   { icon: 'directions_car', label: 'Fleet Management', href: '/admin/fleet', description: 'Manage luxury fleet' },
   { icon: 'confirmation_number', label: 'Manage Bookings', href: '/admin/bookings', description: 'Oversee all reservations' },
   { icon: 'analytics', label: 'CRM & Users', href: '/admin/crm', description: 'Customer relationships' },
