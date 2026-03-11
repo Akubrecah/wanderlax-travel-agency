@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { SupplierSidebar } from '@/components/supplier/SupplierSidebar';
-import { AdminHeader } from '@/components/admin/AdminHeader';
+import { SupplierHeader } from '@/components/supplier/SupplierHeader';
 
 // Mock data for initial supplier dashboard
 const MOCK_STATS = {
@@ -34,7 +34,7 @@ export default function SupplierDashboardPage() {
         {/* Main Content */}
         <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-[#180a0a]">
           {/* Header */}
-          <AdminHeader 
+          <SupplierHeader 
             title="Supplier Dashboard" 
             description="Manage your listings, bookings, and earnings."
           >
@@ -71,7 +71,7 @@ export default function SupplierDashboardPage() {
                 </div>
               )}
             </div>
-          </AdminHeader>
+          </SupplierHeader>
 
           {/* Scrollable Area */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8">
