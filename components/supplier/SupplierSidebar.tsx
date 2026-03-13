@@ -1,39 +1,32 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import { useSupplierSidebar } from './SupplierSidebarContext';
 
 export function SupplierSidebar() {
   const { user } = useUser();
   const pathname = usePathname();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { isMobileOpen, closeMobileSidebar } = useSupplierSidebar();
 
   const getLinkClasses = (path: string) => {
     const isActive =
       path === '/supplier' ? pathname === path : pathname.startsWith(path);
     if (isActive) {
-      return 'flex items-center gap-3 px-4 py-3 rounded-lg bg-emerald-600/10 text-emerald-400 border-l-4 border-emerald-500 transition-all';
+      return 'flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary border-l-4 border-primary transition-all group';
     }
-    return 'flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-surface-dark hover:text-white transition-all border-l-4 border-transparent hover:border-border-dark';
+    return 'flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-surface-dark hover:text-white transition-all border-l-4 border-transparent hover:border-border-dark group';
   };
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 bg-background-dark border border-border-dark rounded-lg text-slate-300"
-      >
-        <span className="material-symbols-outlined">menu</span>
-      </button>
-
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
-          onClick={() => setIsMobileOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden transition-opacity duration-300"
+          onClick={closeMobileSidebar}
         />
       )}
 
@@ -45,18 +38,16 @@ export function SupplierSidebar() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-border-dark/50">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-emerald-600/20 flex items-center justify-center ring-2 ring-emerald-500/30">
-              <span className="material-symbols-outlined text-emerald-400 text-[22px]">storefront</span>
-            </div>
+            <div className="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-primary/50" data-alt="Company Logo Abstract" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDxItnaRqAa0g0uhxpuiOdb5rjaRHwYCL0n7dcgj6gpBxbVgzVSpOmVpNDtlkLqEm6Ze2lhMUbFi2PsMFtMdhjHvUW_zqdcsNNAYgdvNCAWPx37jaVg5l-X5JXTcHfj1vcStnvVtqx8d5SjGu0XUlkjaqPEyozRkQfyAY8G8g8Pe-ML_RLvR-ZGxXZPqtBhApMJd6cuGxcuLGsk7ywOLEOUtj_0wy8V0aGHeasXxMKgasV-t32xtgl9phTGColXAYURYBQrnR-sNg')" }}></div>
             <div className="flex flex-col">
-              <h1 className="text-white text-base font-bold tracking-tight">Twende Africa</h1>
-              <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+              <h1 className="text-white text-lg font-bold tracking-tight">Twende Africa</h1>
+              <p className="text-primary text-xs font-semibold uppercase tracking-wider">
                 Supplier Portal
               </p>
             </div>
           </div>
           <button
-            onClick={() => setIsMobileOpen(false)}
+            onClick={closeMobileSidebar}
             className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
           >
             <span className="material-symbols-outlined">close</span>
@@ -66,23 +57,23 @@ export function SupplierSidebar() {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
           <Link className={getLinkClasses('/supplier')} href="/supplier">
-            <span className="material-symbols-outlined text-[22px]">dashboard</span>
+            <span className="material-symbols-outlined text-[24px]">dashboard</span>
             <span className="text-sm font-semibold">Dashboard</span>
           </Link>
           <Link className={getLinkClasses('/supplier/listings')} href="/supplier/listings">
-            <span className="material-symbols-outlined text-[22px]">sell</span>
+            <span className="material-symbols-outlined text-[24px]">sell</span>
             <span className="text-sm font-medium">My Listings</span>
           </Link>
           <Link className={getLinkClasses('/supplier/bookings')} href="/supplier/bookings">
-            <span className="material-symbols-outlined text-[22px]">event_available</span>
+            <span className="material-symbols-outlined text-[24px]">event_available</span>
             <span className="text-sm font-medium">Booking Requests</span>
           </Link>
           <Link className={getLinkClasses('/supplier/earnings')} href="/supplier/earnings">
-            <span className="material-symbols-outlined text-[22px]">payments</span>
+            <span className="material-symbols-outlined text-[24px]">payments</span>
             <span className="text-sm font-medium">Earnings</span>
           </Link>
           <Link className={getLinkClasses('/supplier/reviews')} href="/supplier/reviews">
-            <span className="material-symbols-outlined text-[22px]">reviews</span>
+            <span className="material-symbols-outlined text-[24px]">reviews</span>
             <span className="text-sm font-medium">Reviews</span>
           </Link>
 
@@ -91,15 +82,15 @@ export function SupplierSidebar() {
               Account
             </p>
             <Link className={getLinkClasses('/portal/profile')} href="/portal/profile">
-              <span className="material-symbols-outlined text-[22px]">person</span>
+              <span className="material-symbols-outlined text-[24px]">person</span>
               <span className="text-sm font-medium">My Profile</span>
             </Link>
             <Link
-              href="/portal/dashboard"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-400/80 hover:bg-surface-dark hover:text-emerald-400 transition-all border-l-4 border-transparent hover:border-border-dark mt-1"
+              href="/"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary/80 hover:bg-surface-dark hover:text-primary transition-all border-l-4 border-transparent hover:border-border-dark mt-1 group"
             >
-              <span className="material-symbols-outlined text-[22px]">switch_account</span>
-              <span className="text-sm font-medium">Traveler Dashboard</span>
+              <span className="material-symbols-outlined text-[24px]">home</span>
+              <span className="text-sm font-medium">Main Website</span>
             </Link>
           </div>
         </nav>
@@ -120,7 +111,7 @@ export function SupplierSidebar() {
               <span className="text-sm font-medium text-white truncate">
                 {user?.fullName || 'Supplier'}
               </span>
-              <span className="text-xs text-emerald-400 truncate capitalize font-medium">
+              <span className="text-xs text-primary truncate capitalize font-medium">
                 Supplier
               </span>
             </div>

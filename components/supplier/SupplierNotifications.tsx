@@ -12,7 +12,7 @@ export function SupplierNotifications() {
         className="relative p-2 rounded-lg bg-surface-dark text-slate-300 hover:text-white hover:bg-border-dark transition-colors"
       >
         <span className="material-symbols-outlined">notifications</span>
-        <span className="absolute -top-1 -right-1 h-5 w-5 bg-emerald-500 rounded-full ring-2 ring-surface-dark flex items-center justify-center">
+        <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full ring-2 ring-surface-dark flex items-center justify-center">
           <span className="text-[10px] font-bold text-white leading-none">3</span>
         </span>
       </button>

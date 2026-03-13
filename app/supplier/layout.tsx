@@ -1,6 +1,7 @@
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { SupplierSidebarProvider } from '@/components/supplier/SupplierSidebarContext';
 
 export default async function SupplierLayout({
   children,
@@ -53,5 +54,9 @@ export default async function SupplierLayout({
     redirect('/portal/dashboard');
   }
 
-  return <>{children}</>;
+  return (
+    <SupplierSidebarProvider>
+      {children}
+    </SupplierSidebarProvider>
+  );
 }
